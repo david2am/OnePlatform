@@ -1,6 +1,6 @@
-@onePlatform_HostAddress = http://localhost:5221
+@baseUrl = http://localhost:5221
 
-GET {{onePlatform_HostAddress}}/weatherforecast/
+GET {{baseUrl}}/api/payments
 Accept: application/json
 
 ###
