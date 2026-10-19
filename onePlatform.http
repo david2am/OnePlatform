@@ -1,6 +1,11 @@
 @baseUrl = http://localhost:5221
 
-GET {{baseUrl}}/api/payments
+POST {{baseUrl}}/api/payments
 Accept: application/json
+Content-Type: application/json
+
+{
+  "message": "Dumb first message"
+}
 
 ###
