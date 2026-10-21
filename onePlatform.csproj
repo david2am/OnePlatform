@@ -1,3 +1,4 @@
+
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
@@ -8,6 +9,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="src\Clearing\OnePlatform.Clearing.Application\OnePlatform.Clearing.Application.csproj" />
+    <ProjectReference Include="src\Clearing\OnePlatform.Clearing.Infrastructure\OnePlatform.Clearing.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="src\Clearing\**\*.cs" />
+    <Content Remove="src\Clearing\**\*" />
+    <EmbeddedResource Remove="src\Clearing\**\*" />
+    <None Remove="src\Clearing\**\*" />
   </ItemGroup>
 
 </Project>

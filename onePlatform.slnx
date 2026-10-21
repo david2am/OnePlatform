@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Clearing/">
+    <Project Path="src/Clearing/OnePlatform.Clearing.Application/OnePlatform.Clearing.Application.csproj" />
+    <Project Path="src/Clearing/OnePlatform.Clearing.Domain/OnePlatform.Clearing.Domain.csproj" />
+    <Project Path="src/Clearing/OnePlatform.Clearing.Infrastructure/OnePlatform.Clearing.Infrastructure.csproj" />
+  </Folder>
+  <Project Path="onePlatform.csproj" />
+</Solution>
