@@ -106,26 +106,26 @@ public sealed class Account : Entity
 public static class AccountErrors
 {
   public static readonly Error InstitutionRequired = new(
-    "OneAccount.InstitutionRequired", "Institution id is required.");
+    "Account.InstitutionRequired", "Institution id is required.");
 
   public static readonly Error InvalidAccountNumber = new(
-    "OneAccount.InvalidAccountNumber",
+    "Account.InvalidAccountNumber",
     "Account number must contain 1 to 17 digits.");
 
   public static readonly Error InvalidCurrency = new(
-    "OneAccount.InvalidCurrency",
+    "Account.InvalidCurrency",
     "Currency must be a 3-letter ISO code, for example USD.");
 
   public static readonly Error AccountClosed = new(
-    "OneAccount.AccountClosed", "The account is closed.");
+    "Account.AccountClosed", "The account is closed.");
 
   public static readonly Error AlreadyFrozen = new(
-    "OneAccount.AlreadyFrozen", "The account is already frozen.");
+    "Account.AlreadyFrozen", "The account is already frozen.");
 
   public static readonly Error NotFrozen = new(
-    "OneAccount.NotFrozen", "Only a frozen account can be unfrozen.");
+    "Account.NotFrozen", "Only a frozen account can be unfrozen.");
 
   public static readonly Error BalanceNotZero = new(
-    "OneAccount.BalanceNotZero",
+    "Account.BalanceNotZero",
     "An account can only be closed when its balance is zero.");
 }
