@@ -4,7 +4,7 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class Payment : Entity
+public sealed class Payment : AggregateRoot
 {
   private Payment() : base(Guid.Empty) {
     MessageId = string.Empty;

@@ -3,7 +3,7 @@ using OnePlatform.Clearing.Domain.Shared;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class Account : Entity
+public sealed class Account : AggregateRoot
 {
   private Account(Guid id) : base(id){}
 

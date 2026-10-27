@@ -2,7 +2,7 @@ using OnePlatform.Clearing.Domain.Shared;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class Institution : Entity
+public sealed class Institution : AggregateRoot
 {
   public string Name { get; private set; } = string.Empty;
 
