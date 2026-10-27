@@ -1,3 +1,4 @@
+using OnePlatform.Clearing.Domain.DomainEvents;
 using OnePlatform.Clearing.Domain.Enums;
 using OnePlatform.Clearing.Domain.Shared;
 using OnePlatform.Clearing.Domain.ValueObjects;
@@ -135,6 +136,8 @@ public sealed class Payment : AggregateRoot
     payment._statusEvents.Add(
       StatusEvent.Create(payment.Id, PaymentEventType.Received, receivedAt, "")
     );
+
+    payment.RaiseDomainEvent(new PaymentReceivedDomainEvent());
 
     return Result.Success(payment);
   }
