@@ -90,6 +90,9 @@ public sealed class Payment : Entity
     if (payeeInstitutionId == Guid.Empty)
       return Result.Failure<Payment>(PaymentErrors.PayeeInstitutionRequired);
 
+    if (payer is null || payee is null)
+      return Result.Failure<Payment>(PaymentErrors.PartyRequired);
+
     if (amountMinor <= 0)
       return Result.Failure<Payment>(PaymentErrors.InvalidAmount);
 
@@ -135,10 +138,42 @@ public sealed class Payment : Entity
 
     return Result.Success(payment);
   }
+
+  public Result RecordValidationResult(
+    ValidationCheckType checkType,
+    ValidationOutcome outcome,
+    DateTime checketAt)
+  {
+    if (!Enum.IsDefined(checkType))
+      return Result.Failure(PaymentErrors.InvalidCheckType);
+
+    if (!Enum.IsDefined(outcome))
+      return Result.Failure(PaymentErrors.InvalidOutcome);
+
+    if (Status != PaymentStatus.Pending)
+      return Result.Failure(PaymentErrors.NotPending);
+
+    if (_validationResults.Any(v => v.CheckType == checkType))
+      return Result.Failure(PaymentErrors.NotPending);
+
+    _validationResults.Add(ValidationResult.Create(Id, checkType, outcome, checketAt));
+
+    return Result.Success();
+  }
 }
 
 public static class PaymentErrors
 {
+  public static readonly Error InvalidCheckType = new(
+    "Payment.InvalidCheckType",
+    "Validation check type is not valid."
+  );
+
+  public static readonly Error InvalidOutcome = new(
+    "Payment.InvalidOutcome",
+    "Validation outcome is not valid."
+  );
+
   public static readonly Error MessageIdRequired = new(
     "Payment.MessageIdRequired",
     "Message id is required."
@@ -157,6 +192,11 @@ public static class PaymentErrors
   public static readonly Error PayeeInstitutionRequired = new(
     "Payment.PayeeInstitutionRequired",
     "Payee institution is required."
+  );
+  
+  public static readonly Error PartyRequired = new(
+    "Payment.PartyRequired",
+    "Party is required."
   );
 
   public static readonly Error InvalidAmount = new(

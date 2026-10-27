@@ -28,6 +28,11 @@ public sealed class ValidationResult : Entity
     Guid paymentId,
     ValidationCheckType checkType,
     ValidationOutcome outcome,
-    DateTime checkedAt
-  ) => new(Guid.NewGuid(), paymentId, checkType, outcome, checkedAt);
+    DateTime checkedAt)
+  {
+    if (paymentId == Guid.Empty)
+      throw new ArgumentException("Payment Id is required.", nameof(paymentId));
+
+    return new(Guid.NewGuid(), paymentId, checkType, outcome, checkedAt);
+  }
 }
