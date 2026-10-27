@@ -160,6 +160,52 @@ public sealed class Payment : Entity
 
     return Result.Success();
   }
+
+  public Result CompleteValidation(DateTime at)
+  {
+    if (Status != PaymentStatus.Pending)
+      return Result.Failure(PaymentErrors.NotPending);
+
+    var allRecorded = Enum.GetValues<ValidationCheckType>()
+      .All(type => _validationResults.Any(v => v.CheckType == type));
+
+    if (!allRecorded)
+      return Result.Failure(PaymentErrors.ValidationIncomplete);
+
+    var failed = _validationResults.Where(v => !v.Passed).ToList();
+
+    if (failed.Count == 0)
+      return ChangeStatusTo(PaymentStatus.Validated, PaymentEventType.Validated, at);
+
+    var details = "Failed checks: " + string.Join(", ", failed.Select(v => v.CheckType));
+    return ChangeStatusTo(PaymentStatus.Rejected, PaymentEventType.Rejected, at, details);
+  }
+
+  private static readonly IReadOnlyDictionary<PaymentStatus, PaymentStatus[]> AllowedTransitions
+    = new Dictionary<PaymentStatus, PaymentStatus[]>
+    {
+      [PaymentStatus.Pending]   = [PaymentStatus.Validated, PaymentStatus.Rejected],
+      [PaymentStatus.Validated] = [PaymentStatus.Settled],
+      [PaymentStatus.Settled]   = [PaymentStatus.Final, PaymentStatus.Returned],
+      [PaymentStatus.Final]     = [PaymentStatus.Returned],
+      [PaymentStatus.Rejected]  = [],
+      [PaymentStatus.Returned]  = []
+    };
+
+  private Result ChangeStatusTo(
+    PaymentStatus next,
+    PaymentEventType eventType,
+    DateTime at,
+    string? details = null)
+  {
+    if (!AllowedTransitions[Status].Contains(next))
+      return Result.Failure(PaymentErrors.InvalidTransition);
+
+    Status = next;
+    _statusEvents.Add(StatusEvent.Create(Id, eventType, at, details));
+
+    return Result.Success();
+  }
 }
 
 public static class PaymentErrors
