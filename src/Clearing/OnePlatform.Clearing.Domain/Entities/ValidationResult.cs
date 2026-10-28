@@ -11,7 +11,7 @@ public sealed class ValidationResult : Entity
     Guid paymentId,
     ValidationCheckType checkType,
     ValidationOutcome outcome,
-    DateTime checkedAt
+    DateTimeOffset checkedAt
   ) : base(id)
   {
     
@@ -20,7 +20,7 @@ public sealed class ValidationResult : Entity
   public Guid PaymentId { get; private set; }
   public ValidationCheckType CheckType { get; private set; }
   public ValidationOutcome Outcome { get; private set; }
-  public DateTime CheckedAt { get; private set; }
+  public DateTimeOffset CheckedAt { get; private set; }
 
   public bool Passed => Outcome == ValidationOutcome.Pass;
 
@@ -28,7 +28,7 @@ public sealed class ValidationResult : Entity
     Guid paymentId,
     ValidationCheckType checkType,
     ValidationOutcome outcome,
-    DateTime checkedAt)
+    DateTimeOffset checkedAt)
   {
     if (paymentId == Guid.Empty)
       throw new ArgumentException("Payment Id is required.", nameof(paymentId));

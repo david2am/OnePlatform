@@ -10,7 +10,7 @@ public sealed class StatusEvent : Entity
     Guid id,
     Guid paymentId,
     PaymentEventType eventType,
-    DateTime occurredAt,
+    DateTimeOffset occurredAt,
     string? details
   ) : base(id)
   {
@@ -22,13 +22,13 @@ public sealed class StatusEvent : Entity
 
   public Guid PaymentId { get; private set; }
   public PaymentEventType EventType { get; private set; }
-  public DateTime OccurredAt { get; private set; }
+  public DateTimeOffset OccurredAt { get; private set; }
   public string? Details { get; private set; }
 
   internal static StatusEvent Create (
     Guid paymentId,
     PaymentEventType eventType,
-    DateTime occurredAt,
+    DateTimeOffset occurredAt,
     string? details
   ) => new (Guid.NewGuid(), paymentId, eventType, occurredAt, details);
 }

@@ -26,7 +26,7 @@ public sealed class Payment : AggregateRoot
     Money amount,
     PartyDetails debtor,
     PartyDetails creditor,
-    DateTime initiatedAt
+    DateTimeOffset initiatedAt
   ) : base(id)
   {
     MessageId = messageId;
@@ -49,7 +49,7 @@ public sealed class Payment : AggregateRoot
 
   public PaymentType PaymentType { get; private set; }
   public PaymentStatus Status { get; private set; }
-  public DateTime InitiatedAt { get; private set; }
+  public DateTimeOffset InitiatedAt { get; private set; }
 
   private readonly List<ValidationResult> _validationResults = [];
   private readonly List<StatusEvent> _statusEvents = [];
@@ -63,8 +63,8 @@ public sealed class Payment : AggregateRoot
     Money amount,
     PartyDetails debtor,
     PartyDetails creditor,
-    DateTime initiatedAt,
-    DateTime receivedAt
+    DateTimeOffset initiatedAt,
+    DateTimeOffset receivedAt
   )
   {
     var msgId = messageId?.Trim();
@@ -123,7 +123,7 @@ public sealed class Payment : AggregateRoot
   public Result RecordValidationResult(
     ValidationCheckType checkType,
     ValidationOutcome outcome,
-    DateTime checkedAt)
+    DateTimeOffset checkedAt)
   {
     if (!Enum.IsDefined(checkType))
       return Result.Failure(PaymentErrors.InvalidCheckType);
@@ -150,7 +150,7 @@ private static readonly ValidationCheckType[] _requiredChecks =
     ValidationCheckType.Membership
 ];
 
-  public Result CompleteValidation(DateTime at)
+  public Result CompleteValidation(DateTimeOffset at)
   {
     if (Status != PaymentStatus.Pending)
       return Result.Failure(PaymentErrors.NotPending);
@@ -200,7 +200,7 @@ private static readonly ValidationCheckType[] _requiredChecks =
   private Result ChangeStatusTo(
     PaymentStatus next,
     PaymentEventType eventType,
-    DateTime at,
+    DateTimeOffset at,
     string? details = null)
   {
     if (!CanTransition(Status, next))

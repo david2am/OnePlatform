@@ -12,7 +12,7 @@ public sealed class Account : AggregateRoot
     Guid institutionId,
     string accountNumber,
     string currency,
-    DateTime openedAt
+    DateTimeOffset openedAt
   ) : base(id)
   {
     InstitutionId = institutionId;
@@ -25,14 +25,14 @@ public sealed class Account : AggregateRoot
   public Guid InstitutionId { get; private set; }
   public string AccountNumber { get; private set; } = string.Empty;
   public string Currency { get; private set; } = string.Empty;
-  public DateTime OpenedAt { get; private set; }
+  public DateTimeOffset OpenedAt { get; private set; }
   public AccountStatus Status { get; private set; }
 
   public static Result<Account> Open(
     Guid institutionId,
     string accountNumber,
     string currency,
-    DateTime openedAt)
+    DateTimeOffset openedAt)
   {
     if (institutionId == Guid.Empty)
       return Result.Failure<Account>(AccountErrors.InstitutionRequired);

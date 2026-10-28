@@ -9,7 +9,7 @@ public sealed class Institution : AggregateRoot
   // ABA number or RTN, routing transit number is a 9-digit ID that identifies a financial institution in the US
   public string RoutingNumber { get; private set; } = string.Empty;
   public bool IsMember { get; private set; }
-  public DateTime? MembershipSince { get; private set; }
+  public DateTimeOffset? MembershipSince { get; private set; }
 
   // Used only by EF Core when it loads data from the database.
   // Entity has no parameterless constructor, so we pass Guid.Empty;
@@ -24,7 +24,7 @@ public sealed class Institution : AggregateRoot
     string name,
     string routingNumber,
     bool isMember,
-    DateTime? membershipSince) : base(id)
+    DateTimeOffset? membershipSince) : base(id)
   {
     Name = name;
     RoutingNumber = routingNumber;
@@ -36,7 +36,7 @@ public sealed class Institution : AggregateRoot
     string name,
     string routingNumber,
     bool isMember,
-    DateTime? membershipSince)
+    DateTimeOffset? membershipSince)
   {
     // validations
     if (string.IsNullOrWhiteSpace(name))
@@ -62,7 +62,7 @@ public sealed class Institution : AggregateRoot
     );
   }
 
-  public void EnrollAsMember(DateTime since)
+  public void EnrollAsMember(DateTimeOffset since)
   {
     if (IsMember)
       throw new InvalidOperationException("Institution is already a member.");
