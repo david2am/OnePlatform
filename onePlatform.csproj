@@ -18,9 +18,6 @@
 
   <ItemGroup>
     <Compile Remove="src\Clearing\**\*.cs" />
-    <Content Remove="src\Clearing\**\*" />
-    <EmbeddedResource Remove="src\Clearing\**\*" />
-    <None Remove="src\Clearing\**\*" />
   </ItemGroup>
 
 </Project>
