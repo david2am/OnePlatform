@@ -16,6 +16,7 @@ public sealed class Payment : AggregateRoot
     Amount = null!;
     Debtor = null!;
     Creditor = null!;
+    Status = PaymentStatus.Pending;
   }
 
   private Payment(
@@ -38,7 +39,7 @@ public sealed class Payment : AggregateRoot
     Status = PaymentStatus.Pending;
   }
 
-  // ISO 20022 MsgId from the pacs.008 message (unique).
+  // ISO 20022 message identifiers.
   public string MessageId { get; private set; }
   public string EndToEndId { get; private set; }
 
@@ -53,8 +54,8 @@ public sealed class Payment : AggregateRoot
   private readonly List<ValidationResult> _validationResults = [];
   private readonly List<StatusEvent> _statusEvents = [];
 
-  public IReadOnlyCollection<ValidationResult> ValidationResults => _validationResults;
-  public IReadOnlyCollection<StatusEvent> StatusEvents => _statusEvents;
+  public IReadOnlyCollection<ValidationResult> ValidationResults => _validationResults.AsReadOnly();
+  public IReadOnlyCollection<StatusEvent> StatusEvents => _statusEvents.AsReadOnly();
 
   public static Result<Payment> Receive(
     string messageId,
@@ -86,6 +87,9 @@ public sealed class Payment : AggregateRoot
 
     if (debtor is null || creditor is null)
       return Result.Failure<Payment>(PaymentErrors.PartyRequired);
+
+    if (debtor.InstitutionId == creditor.InstitutionId && debtor.AccountNumber == creditor.AccountNumber)
+      return Result.Failure<Payment>(PaymentErrors.SameAccount);
     
     var payment = new Payment(
       Guid.NewGuid(),
@@ -98,7 +102,11 @@ public sealed class Payment : AggregateRoot
     );
 
     payment._statusEvents.Add(
-      StatusEvent.Create(payment.Id, PaymentEventType.Received, receivedAt, "")
+      StatusEvent.Create(
+        payment.Id,
+        PaymentEventType.Received,
+        receivedAt,
+        null)
     );
 
     payment.RaiseDomainEvent(
@@ -134,35 +142,59 @@ public sealed class Payment : AggregateRoot
     return Result.Success();
   }
 
+private static readonly ValidationCheckType[] _requiredChecks =
+[
+    ValidationCheckType.Schema,
+    ValidationCheckType.Sanctions,
+    ValidationCheckType.Duplicate,
+    ValidationCheckType.Membership
+];
+
   public Result CompleteValidation(DateTime at)
   {
     if (Status != PaymentStatus.Pending)
       return Result.Failure(PaymentErrors.NotPending);
 
-    var allRecorded = Enum.GetValues<ValidationCheckType>()
-      .All(type => _validationResults.Any(v => v.CheckType == type));
+    var allRecorded = _requiredChecks.All(
+        required => _validationResults.Any(
+            result => result.CheckType == required));
 
     if (!allRecorded)
-      return Result.Failure(PaymentErrors.ValidationIncomplete);
+        return Result.Failure(PaymentErrors.ValidationIncomplete);
 
-    var failed = _validationResults.Where(v => !v.Passed).ToList();
+    var failedChecks = _validationResults
+        .Where(result =>
+            _requiredChecks.Contains(result.CheckType) &&
+            !result.Passed
+        )
+        .Select(result => result.CheckType)
+        .ToArray();
 
-    if (failed.Count == 0)
+    if (failedChecks.Length == 0)
       return ChangeStatusTo(PaymentStatus.Validated, PaymentEventType.Validated, at);
 
-    var details = "Failed checks: " + string.Join(", ", failed.Select(v => v.CheckType));
-    return ChangeStatusTo(PaymentStatus.Rejected, PaymentEventType.Rejected, at, details);
+    var details = "Failed checks: " + string.Join(", ", failedChecks);
+
+    return ChangeStatusTo(
+      PaymentStatus.Rejected,
+      PaymentEventType.Rejected,
+      at,
+      details
+    );
   }
 
-  private static readonly IReadOnlyDictionary<PaymentStatus, PaymentStatus[]> AllowedTransitions
-    = new Dictionary<PaymentStatus, PaymentStatus[]>
+    private static bool CanTransition(
+      PaymentStatus current,
+      PaymentStatus next) =>
+    (current, next) switch
     {
-      [PaymentStatus.Pending]   = [PaymentStatus.Validated, PaymentStatus.Rejected],
-      [PaymentStatus.Validated] = [PaymentStatus.Settled],
-      [PaymentStatus.Settled]   = [PaymentStatus.Final, PaymentStatus.Returned],
-      [PaymentStatus.Final]     = [PaymentStatus.Returned],
-      [PaymentStatus.Rejected]  = [],
-      [PaymentStatus.Returned]  = []
+        (PaymentStatus.Pending, PaymentStatus.Validated) => true,
+        (PaymentStatus.Pending, PaymentStatus.Rejected) => true,
+        (PaymentStatus.Validated, PaymentStatus.Settled) => true,
+        (PaymentStatus.Settled, PaymentStatus.Final) => true,
+        (PaymentStatus.Settled, PaymentStatus.Returned) => true,
+        (PaymentStatus.Final, PaymentStatus.Returned) => true,
+        _ => false
     };
 
   private Result ChangeStatusTo(
@@ -171,7 +203,7 @@ public sealed class Payment : AggregateRoot
     DateTime at,
     string? details = null)
   {
-    if (!AllowedTransitions[Status].Contains(next))
+    if (!CanTransition(Status, next))
       return Result.Failure(PaymentErrors.InvalidTransition);
 
     Status = next;
@@ -241,5 +273,10 @@ public static class PaymentErrors
   public static readonly Error InvalidTransition = new(
     "Payment.InvalidTransition",
     "This status change is not allowed."
+  );
+
+  public static readonly Error SameAccount = new(
+    "Payment.SameAccount",
+    "Debtor and creditor cannot be the same account."
   );
 }

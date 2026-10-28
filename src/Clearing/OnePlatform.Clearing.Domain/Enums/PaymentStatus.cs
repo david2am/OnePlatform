@@ -11,7 +11,8 @@ public enum PaymentStatus
 }
 public enum PaymentType
 {
-  CreditTransfer = 1
+  CreditTransfer = 1,
+  DirectDebit = 2
 }
 public enum PaymentEventType
 {
