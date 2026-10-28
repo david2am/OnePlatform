@@ -1,5 +1,9 @@
+using OnePlatform.Clearing.Application;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+// builder.Services.AddMediatR(OnePlatform.Clearing.Application.AssemblyReference.Assembly);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
