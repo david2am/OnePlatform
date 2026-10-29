@@ -2,9 +2,9 @@ using OnePlatform.Clearing.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(
-        typeof(AssemblyReference).Assembly));
+builder.Services
+    .AddClearingApplication();
+    // .AddClearingInfrastructure(builder.Configuration); TODO: uncomment later
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
