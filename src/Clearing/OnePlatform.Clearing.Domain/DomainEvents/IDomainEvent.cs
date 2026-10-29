@@ -1,6 +1,7 @@
+using MediatR;
 namespace OnePlatform.Clearing.Domain.DomainEvents;
 
-public interface IDomainEvent
+public interface IDomainEvent : INotification
 {
   
 }

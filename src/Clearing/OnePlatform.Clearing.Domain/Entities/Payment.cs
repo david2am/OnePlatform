@@ -139,6 +139,14 @@ public sealed class Payment : AggregateRoot
 
     _validationResults.Add(ValidationResult.Create(Id, checkType, outcome, checkedAt));
 
+    RaiseDomainEvent( // TODO: validate later
+      new PaymentRecordedValidationDomainEvent(
+        checkType,
+        outcome,
+        checkedAt
+      )
+    );
+
     return Result.Success();
   }
 
@@ -171,9 +179,18 @@ private static readonly ValidationCheckType[] _requiredChecks =
         .ToArray();
 
     if (failedChecks.Length == 0)
+    {
+      RaiseDomainEvent( // TODO: validate later
+        new PaymentValidationCompletedDomainEvent(Id, at)
+      );
       return ChangeStatusTo(PaymentStatus.Validated, PaymentEventType.Validated, at);
+    }
 
     var details = "Failed checks: " + string.Join(", ", failedChecks);
+
+    RaiseDomainEvent( // TODO: validate later
+      new PaymentValidationFailedDomainEvent(Id, at)
+    );
 
     return ChangeStatusTo(
       PaymentStatus.Rejected,
