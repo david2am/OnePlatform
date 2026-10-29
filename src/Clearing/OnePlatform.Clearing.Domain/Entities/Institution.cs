@@ -48,7 +48,7 @@ public sealed class Institution : AggregateRoot
     if (isMember && membershipSince is null)
       return Result.Failure<Institution>(InstitutionErrors.MembershipDateRequired);
     
-    if (isMember && membershipSince is not null)
+    if (!isMember && membershipSince is not null)
       return Result.Failure<Institution>(InstitutionErrors.MembershipDateNotAllowed);
 
     return Result.Success(

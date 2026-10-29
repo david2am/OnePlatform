@@ -4,16 +4,16 @@ namespace OnePlatform.Clearing.Domain.ValueObjects;
 
 public sealed record Money
 {
-  public decimal Amount { get; }
+  public long Amount { get; }
   public string Currency { get; } = string.Empty;
 
-  private Money(decimal amount, string currency)
+  private Money(long amount, string currency)
   {
     Amount = amount;
     Currency = currency;
   }
 
-  public static Result<Money> Create(decimal amount, string currency)
+  public static Result<Money> Create(long amount, string currency)
   {
     if (amount <= 0)
       return Result.Failure<Money>(MoneyErrors.NotPositive);

@@ -6,6 +6,6 @@ public interface IPaymentRepository
 {
   Task AddAsync(
     Payment payment,
-    CancellationToken cancellationToken
+    CancellationToken cancellationToken = default
   );
 }

@@ -8,5 +8,5 @@ public sealed record CreateInstitutionCommand(
   string Name,
   string RoutingNumber,
   bool IsMember,
-  DateTimeOffset MembershipSince
+  DateTimeOffset? MembershipSince
 ) : ICommand<Institution>;
