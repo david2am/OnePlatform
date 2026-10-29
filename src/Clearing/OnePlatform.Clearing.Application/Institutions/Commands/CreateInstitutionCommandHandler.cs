@@ -1,19 +1,42 @@
 using MediatR;
 using OnePlatform.Clearing.Application.Abstractions;
+using OnePlatform.Clearing.Domain.Entities;
 using OnePlatform.Clearing.Domain.Shared;
 
-namespace OnePlatform.Clearing.Application.Institution.Commands;
+namespace OnePlatform.Clearing.Application.Institutions.Commands;
 
-internal sealed class CreateInstitutionCommandHandler : ICommandHandler<CreateInstitutionCommand>
+internal sealed class CreateInstitutionCommandHandler : ICommandHandler<CreateInstitutionCommand, Institution>
 {
-  // public CreateInstitutionCommand(
+  private readonly IInstitutionRepository _institutions;
+  private readonly TimeProvider _timeProvider;
 
-  // )
-  // {
-    
-  // }
-  public async Task<Result> Handle(CreateInstitutionCommand request, CancellationToken cancellationToken)
+  public CreateInstitutionCommandHandler(
+    IInstitutionRepository institutions,
+    TimeProvider timeProvider
+  )
   {
-    return Result.Success();
+   _institutions = institutions;
+   _timeProvider = timeProvider;
+  }
+  public async Task<Result<Institution>> Handle(
+    CreateInstitutionCommand command,
+    CancellationToken cancellationToken
+  )
+  {
+    var result = Institution.Create(
+      command.Name,
+      command.RoutingNumber,
+      command.IsMember,
+      command.MembershipSince
+    );
+
+    if (result.IsFailure)
+      return Result.Failure<Institution>(result.Error);
+
+    var institution = result.Value;
+
+    await _institutions.AddAsync(institution, cancellationToken);
+
+    return Result.Success(institution);
   }
 }
