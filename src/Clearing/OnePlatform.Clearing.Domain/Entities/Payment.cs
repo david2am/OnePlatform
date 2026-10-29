@@ -92,7 +92,7 @@ public sealed class Payment : AggregateRoot
       return Result.Failure<Payment>(PaymentErrors.SameAccount);
     
     var payment = new Payment(
-      Guid.NewGuid(),
+      Guid.CreateVersion7(),
       msgId,
       e2eId,
       amount,

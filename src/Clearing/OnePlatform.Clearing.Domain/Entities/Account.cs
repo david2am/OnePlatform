@@ -47,7 +47,7 @@ public sealed class Account : AggregateRoot
 
     return Result.Success(
       new Account(
-        Guid.NewGuid(),
+        Guid.CreateVersion7(),
         institutionId,
         accountNumber,
         normalizedCurency,

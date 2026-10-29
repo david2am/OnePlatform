@@ -33,6 +33,6 @@ public sealed class ValidationResult : Entity
     if (paymentId == Guid.Empty)
       throw new ArgumentException("Payment Id is required.", nameof(paymentId));
 
-    return new(Guid.NewGuid(), paymentId, checkType, outcome, checkedAt);
+    return new(Guid.CreateVersion7(), paymentId, checkType, outcome, checkedAt);
   }
 }

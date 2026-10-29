@@ -30,5 +30,5 @@ public sealed class StatusEvent : Entity
     PaymentEventType eventType,
     DateTimeOffset occurredAt,
     string? details
-  ) => new (Guid.NewGuid(), paymentId, eventType, occurredAt, details);
+  ) => new (Guid.CreateVersion7(), paymentId, eventType, occurredAt, details);
 }

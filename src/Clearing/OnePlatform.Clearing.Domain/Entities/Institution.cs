@@ -53,7 +53,7 @@ public sealed class Institution : AggregateRoot
 
     return Result.Success(
       new Institution(
-        Guid.NewGuid(),
+        Guid.CreateVersion7(),
         name,
         routingNumber,
         isMember,
