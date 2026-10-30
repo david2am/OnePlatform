@@ -5,7 +5,21 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "message": "Dumb first message"
+  "MessageId": "123",
+  "EndToEndId": "321",
+  // Money
+  "Amount": 123456,
+  "Currency": "USD",
+  // Debtor
+  "DebtorAccountNumber": "123321",
+  "DebtorName": "Carlo",
+  "DebtorInstitutionId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+  // Creditor
+  "CreditorAccountNumber": "456654",
+  "CreditorName": "Laura",
+  "CreditorInstitutionId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+
+  "InitiatedAt": "2026-10-30T14:00:00Z"
 }
 
 ###
