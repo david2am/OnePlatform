@@ -2,15 +2,15 @@ using System.Collections.Concurrent;
 using OnePlatform.Clearing.Application.Institutions;
 using OnePlatform.Clearing.Domain.Entities;
 
-namespace OnePlatform.Clearing.Infrastructure.Institutions;
+namespace OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 
-public class InMemoryInstitutionRepository : IInstitutionRepository
+internal class InMemoryInstitutionRepository : InMemoryRepository<Institution>, IInstitutionRepository
 {
   private readonly ConcurrentDictionary<Guid, Institution> _store = new();
 
   public Task AddAsync(Institution institution, CancellationToken ct)
   {
-    _store[institution.Id] = institution;
+    Save(institution);
     return Task.CompletedTask;
   }
 }

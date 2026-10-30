@@ -1,8 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OnePlatform.Clearing.Application.Payments;
 using OnePlatform.Clearing.Application.Institutions;
-using OnePlatform.Clearing.Infrastructure.Payments;
-using OnePlatform.Clearing.Infrastructure.Institutions;
+using OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 
 namespace OnePlatform.Clearing.Infrastructure;
 
