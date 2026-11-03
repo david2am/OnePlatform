@@ -1,0 +1,23 @@
+@baseUrl = http://localhost:5221
+
+POST {{baseUrl}}/api/institutions
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Name": "CU A",
+  "RoutingNumber": "021000021",
+  "IsMember": true,
+  "MembershipSince": "2020-10-30T14:00:00Z"
+}
+
+### invalid routing number
+POST {{baseUrl}}/api/institutions
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Name": "CU C",
+  "RoutingNumber": "123",
+  "IsMember": true
+}

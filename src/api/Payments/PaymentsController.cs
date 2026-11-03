@@ -37,7 +37,7 @@ public sealed class PaymentsController(ISender sender) : ControllerBase
 
     return response.IsSuccess
       ? Ok(response.Value)
-      : BadRequest(response.Error);
+      : NotFound(response.Error);
   }
 
   private ObjectResult ToProblem(Error error) => Problem(
