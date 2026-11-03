@@ -6,6 +6,11 @@ public interface IPaymentRepository
 {
   Task AddAsync(
     Payment payment,
-    CancellationToken cancellationToken = default
+    CancellationToken ct = default
+  );
+
+  Task<Payment?> GetByIdAsync(
+    Guid id,
+    CancellationToken ct = default
   );
 }

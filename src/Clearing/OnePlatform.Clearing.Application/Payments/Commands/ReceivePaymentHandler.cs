@@ -20,7 +20,7 @@ public sealed class ReceivePaymentHandler : ICommandHandler<ReceivePaymentComman
 
   public async Task<Result<Payment>> Handle(
     ReceivePaymentCommand command,
-    CancellationToken cancellationToken = default
+    CancellationToken ct = default
   )
   {
     var receivedAt = _timeProvider.GetUtcNow();
@@ -40,7 +40,7 @@ public sealed class ReceivePaymentHandler : ICommandHandler<ReceivePaymentComman
 
     var payment = result.Value;
 
-    await _payments.AddAsync(payment, cancellationToken);
+    await _payments.AddAsync(payment, ct);
 
     return Result.Success(payment);
   }

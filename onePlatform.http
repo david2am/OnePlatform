@@ -23,3 +23,5 @@ Content-Type: application/json
 }
 
 ###
+GET {{baseUrl}}/api/payments/01a1a1d6-6107-7781-9ec1-b6a38dbe02e7
+Accept: application/json

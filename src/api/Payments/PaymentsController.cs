@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnePlatform.Clearing.Application.Payments.Queries;
 using OnePlatform.Clearing.Domain.Shared;
 
 namespace OnePlatform.Api.Payments;
@@ -22,6 +23,21 @@ public sealed class PaymentsController(ISender sender) : ControllerBase
     return result.IsSuccess
       ? Ok(result.Value)
       : BadRequest(result.Error);
+  }
+
+  [HttpGet("{id}")]
+  public async Task<IActionResult> GetById(
+    Guid id,
+    CancellationToken ct
+  )
+  {
+    var query = new GetPaymentByIdQuery(id);
+
+    var response = await sender.Send(query, ct);
+
+    return response.IsSuccess
+      ? Ok(response.Value)
+      : BadRequest(response.Error);
   }
 
   private ObjectResult ToProblem(Error error) => Problem(
