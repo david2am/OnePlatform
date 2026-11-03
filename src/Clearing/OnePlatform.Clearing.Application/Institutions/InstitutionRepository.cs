@@ -6,6 +6,6 @@ public interface IInstitutionRepository
 {
   Task AddAsync(
     Institution institution,
-    CancellationToken cancellationToken = default
+    CancellationToken ct = default
   );
 }

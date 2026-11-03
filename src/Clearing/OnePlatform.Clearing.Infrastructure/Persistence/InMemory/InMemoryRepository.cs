@@ -12,5 +12,8 @@ internal abstract class InMemoryRepository<T> where T : Entity
   protected T? Find(Guid id) =>
     _store.TryGetValue(id, out var entity) ? entity : null;
 
+  protected T? Find(Func<T, bool> predicate) =>
+    _store.Values.FirstOrDefault(predicate);
+
   protected IReadOnlyCollection<T> All() => _store.Values.ToList();
 }

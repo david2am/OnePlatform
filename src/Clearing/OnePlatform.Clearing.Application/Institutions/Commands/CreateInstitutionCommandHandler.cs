@@ -20,7 +20,7 @@ internal sealed class CreateInstitutionCommandHandler : ICommandHandler<CreateIn
   }
   public async Task<Result<Institution>> Handle(
     CreateInstitutionCommand command,
-    CancellationToken cancellationToken
+    CancellationToken ct
   )
   {
     var result = Institution.Create(
@@ -35,7 +35,7 @@ internal sealed class CreateInstitutionCommandHandler : ICommandHandler<CreateIn
 
     var institution = result.Value;
 
-    await _institutions.AddAsync(institution, cancellationToken);
+    await _institutions.AddAsync(institution, ct);
 
     return Result.Success(institution);
   }

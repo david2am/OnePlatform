@@ -12,8 +12,8 @@ internal class InMemoryPaymentRepository : InMemoryRepository<Payment>, IPayment
     return Task.CompletedTask;
   }
 
-  public Task<Payment?> GetByIdAsync(Guid id, CancellationToken ct) =>
-    Task.FromResult(Find(id));
+  public Task<Payment?> GetByE2EAsync(string e2eId, CancellationToken ct) =>
+    Task.FromResult(Find(p => p.EndToEndId == e2eId));
 
   public Task<IReadOnlyList<Payment>> GetAllAsync(CancellationToken ct) =>
     Task.FromResult<IReadOnlyList<Payment>>(All().ToList());

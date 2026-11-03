@@ -4,7 +4,7 @@ using OnePlatform.Clearing.Domain.Shared;
 namespace OnePlatform.Clearing.Application.Payments.Queries;
 
 public sealed class GetPaymentByIdQueryHandler
-  : IQueryHandler<GetPaymentByIdQuery, PaymentResponse>
+  : IQueryHandler<GetPaymentByE2EQuery, PaymentResponse>
 {
   private readonly IPaymentRepository _payments;
 
@@ -13,21 +13,27 @@ public sealed class GetPaymentByIdQueryHandler
     _payments = paymentRepository;
   }
   public async Task<Result<PaymentResponse>> Handle(
-    GetPaymentByIdQuery request,
+    GetPaymentByE2EQuery request,
     CancellationToken ct
   )
   {
-    var payment = await _payments.GetByIdAsync(request.PaymentId, ct);
+    var payment = await _payments.GetByE2EAsync(request.E2EId, ct);
 
     if (payment is null)
       return Result.Failure<PaymentResponse>(
         new Error(
           "Payment.NotFound",
-          $"The payment with Id {request.PaymentId} was not found"
+          $"The payment with EndToEndId {request.E2EId} was not found"
         )
       );
 
-    var response = new PaymentResponse(payment.Id);
+    var response = new PaymentResponse(
+      payment.EndToEndId,
+      payment.Amount.Amount,
+      payment.Amount.Currency,
+      payment.Status,
+      payment.InitiatedAt
+    );
 
     return Result.Success(response);
   }

@@ -13,4 +13,10 @@ internal class InMemoryInstitutionRepository : InMemoryRepository<Institution>, 
     Save(institution);
     return Task.CompletedTask;
   }
+
+  public Task<Institution?> GetById(Guid id) =>
+    Task.FromResult(Find(id));
+
+  public Task<IReadOnlyList<Institution>> GetAllAsync(CancellationToken ct) =>
+    Task.FromResult<IReadOnlyList<Institution>>(All().ToList());
 }

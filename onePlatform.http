@@ -8,7 +8,7 @@ Content-Type: application/json
   "MessageId": "123",
   "EndToEndId": "321",
   // Money
-  "Amount": 123456,
+  "Amount": 500000,
   "Currency": "USD",
   // Debtor
   "DebtorAccountNumber": "123321",
@@ -22,6 +22,35 @@ Content-Type: application/json
   "InitiatedAt": "2026-10-30T14:00:00Z"
 }
 
-###
-GET {{baseUrl}}/api/payments/01a1a1d6-6107-7781-9ec1-b6a38dbe02e7
+### second payment
+POST {{baseUrl}}/api/payments
+Accept: application/json
+Content-Type: application/json
+
+{
+  "MessageId": "321",
+  "EndToEndId": "456",
+  // Money
+  "Amount": 250000,
+  "Currency": "USD",
+  // Debtor
+  "DebtorAccountNumber": "123321",
+  "DebtorName": "Carlo",
+  "DebtorInstitutionId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+  // Creditor
+  "CreditorAccountNumber": "456654",
+  "CreditorName": "Laura",
+  "CreditorInstitutionId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+
+  "InitiatedAt": "2026-11-03T14:00:00Z"
+}
+
+### first payment
+GET {{baseUrl}}/api/payments/321
+Accept: application/json
+### second payment
+GET {{baseUrl}}/api/payments/456
+Accept: application/json
+### payment not found
+GET {{baseUrl}}/api/payments/789
 Accept: application/json

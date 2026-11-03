@@ -9,8 +9,8 @@ public interface IPaymentRepository
     CancellationToken ct = default
   );
 
-  Task<Payment?> GetByIdAsync(
-    Guid id,
+  Task<Payment?> GetByE2EAsync(
+    string e2eId,
     CancellationToken ct = default
   );
 }
