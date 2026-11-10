@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddClearingApplication()
-    .AddClearingInfrastructure();
+    .AddClearingInfrastructure(builder.Configuration);
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
