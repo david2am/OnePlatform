@@ -1,7 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-// using OnePlatform.Clearing.Application.Payments;
-// using OnePlatform.Clearing.Application.Institutions;
-// using OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 using OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,11 +12,17 @@ public static class DependencyInjection
     IConfiguration configuration
   )
   {
-    services.AddDbContext<ClearingDbContext>(options =>
-      options.UseSqlServer(configuration.GetConnectionString("Clearing")));
-    // services.AddSingleton<IPaymentRepository, InMemoryPaymentRepository>();
-    // services.AddSingleton<IInstitutionRepository, InMemoryInstitutionRepository>();
-    services.AddSingleton(TimeProvider.System);
+    var connectionString =
+      configuration.GetConnectionString("Clearing")
+      ?? throw new InvalidOperationException("Connection string 'Clearing' was not found.");
+
+    services.AddDbContext<ClearingDbContext>
+      (options =>
+          options.UseSqlServer(connectionString)
+      );
+
+    services.AddSingleton<TimeProvider>(TimeProvider.System);
+
     return services;
   }
 }

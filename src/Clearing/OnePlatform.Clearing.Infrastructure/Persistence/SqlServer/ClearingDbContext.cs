@@ -10,9 +10,11 @@ public class ClearingDbContext : DbContext
   {}
 
   public DbSet<Payment> Payments => Set<Payment>();
+  public DbSet<Institution> Institutions => Set<Institution>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
+    base.OnModelCreating(modelBuilder);
     modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClearingDbContext).Assembly);
   }
 }
