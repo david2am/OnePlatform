@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Domain.Entities;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
 
@@ -11,6 +12,16 @@ public sealed class PaymentConfiguration
   {
     builder.ToTable("Payments");
     builder.HasKey(p => p.Id);
+
+    builder.Property(p => p.EndToEndId)
+           .HasConversion(id => id.Value, value => EndToEndId.Create(value).Value)
+           .HasMaxLength(35)
+           .IsRequired();
+
+    builder.Property(p => p.MessageId)
+           .HasConversion(id => id.Value, value => MessageId.Create(value).Value)
+           .HasMaxLength(35)
+           .IsRequired();
     
     builder.ComplexProperty(p => p.Amount, money =>
     {
