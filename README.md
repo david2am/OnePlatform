@@ -80,3 +80,12 @@ dotnet user-secrets set \
 
 ```
 
+## Create DB
+
+```sh
+dotnet ef database update \
+  --project src/Clearing/OnePlatform.Clearing.Infrastructure \
+  --startup-project .
+
+```
+
