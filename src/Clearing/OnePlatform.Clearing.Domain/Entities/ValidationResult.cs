@@ -14,7 +14,10 @@ public sealed class ValidationResult : Entity
     DateTimeOffset checkedAt
   ) : base(id)
   {
-    
+    PaymentId = paymentId;
+    CheckType = checkType;
+    Outcome = outcome;
+    CheckedAt = checkedAt;
   }
 
   public Guid PaymentId { get; private set; }

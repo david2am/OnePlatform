@@ -66,5 +66,21 @@ public sealed class PaymentConfiguration
            .HasColumnName("CreditorInstitutionId")
            .IsRequired();
     });
+
+    builder.HasMany(p => p.ValidationResults)
+           .WithOne()
+           .HasForeignKey(v => v.PaymentId);
+
+    builder.Navigation(p => p.ValidationResults)
+           .HasField("_validationResults")
+           .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+    builder.HasMany(p => p.StatusEvents)
+          .WithOne()
+          .HasForeignKey(e => e.PaymentId);
+
+    builder.Navigation(p => p.StatusEvents)
+          .HasField("_statusEvents")
+          .UsePropertyAccessMode(PropertyAccessMode.Field);
   }
 }

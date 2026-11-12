@@ -1,12 +1,14 @@
 using OnePlatform.Clearing.Application.Payments.Commands;
 using OnePlatform.Clearing.Domain.Shared;
+using MessageIdVo = OnePlatform.Clearing.Domain.ValueObjects.MessageId;
+using EndToEndIdVo = OnePlatform.Clearing.Domain.ValueObjects.EndToEndId;
 using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Api.Payments;
 
 public sealed record ReceivePaymentRequest(
-  string PaymentMessageId,
-  string PaymentEndToEndId,
+  string MessageId,
+  string EndToEndId,
   // Money
   long Amount,
   string Currency,
@@ -44,11 +46,11 @@ public sealed record ReceivePaymentRequest(
     if (creditorResult.IsFailure)
       return Result.Failure<ReceivePaymentCommand>(creditorResult.Error);
     
-    var msgIdResult = MessageId.Create(PaymentMessageId);
+    var msgIdResult = MessageIdVo.Create(MessageId);
     if (msgIdResult.IsFailure)
       return Result.Failure<ReceivePaymentCommand>(msgIdResult.Error);
 
-    var e2eIdResult = EndToEndId.Create(PaymentEndToEndId);
+    var e2eIdResult = EndToEndIdVo.Create(EndToEndId);
     if (e2eIdResult.IsFailure)
       return Result.Failure<ReceivePaymentCommand>(e2eIdResult.Error);
 

@@ -1,19 +1,19 @@
 using OnePlatform.Clearing.Application.Institutions.Commands;
 using OnePlatform.Clearing.Domain.Shared;
-using OnePlatform.Clearing.Domain.ValueObjects;
+using RoutingNumberVo = OnePlatform.Clearing.Domain.ValueObjects.RoutingNumber;
 
 namespace OnePlatform.Api.Institutions;
 
 public sealed record CreateInstitutionRequest(
   string Name,
-  string InstitutionRoutingNumber,
+  string RoutingNumber,
   bool IsMember,
   DateTimeOffset MembershipSince
 )
 {
   public Result<CreateInstitutionCommand> ToCommand()
   {
-    var RoutingNumberResult = RoutingNumber.Create(InstitutionRoutingNumber);
+    var RoutingNumberResult = RoutingNumberVo.Create(RoutingNumber);
     if (RoutingNumberResult.IsFailure)
       return Result.Failure<CreateInstitutionCommand>(RoutingNumberResult.Error);
 
