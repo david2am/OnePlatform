@@ -76,3 +76,10 @@ dotnet ef database update \
 
 ```
 
+```sh
+dotnet ef migrations add <MigrationName> \
+  --project src/Clearing/OnePlatform.Clearing.Infrastructure \
+  --startup-project .
+
+```
+
