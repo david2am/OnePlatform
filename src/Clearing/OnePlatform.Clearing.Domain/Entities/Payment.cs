@@ -42,6 +42,8 @@ public sealed class Payment : AggregateRoot
   // ISO 20022 message identifiers.
   public string MessageId { get; private set; }
   public string EndToEndId { get; private set; }
+  // returf_of another InstitutionId
+  public Guid ReturnOf { get; private set; }
 
   public Money Amount { get; private set; }
   public PartyDetails Debtor { get; private set; }
@@ -52,9 +54,9 @@ public sealed class Payment : AggregateRoot
   public DateTimeOffset InitiatedAt { get; private set; }
 
   private readonly List<ValidationResult> _validationResults = [];
-  private readonly List<StatusEvent> _statusEvents = [];
-
   public IReadOnlyCollection<ValidationResult> ValidationResults => _validationResults.AsReadOnly();
+
+  private readonly List<StatusEvent> _statusEvents = [];
   public IReadOnlyCollection<StatusEvent> StatusEvents => _statusEvents.AsReadOnly();
 
   public static Result<Payment> Receive(
