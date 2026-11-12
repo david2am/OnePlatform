@@ -75,8 +75,8 @@ Use dotnet user secrets instead of the appsettings file:
 dotnet user-secrets init
 
 dotnet user-secrets set \
-  "ConnectionStrings:OnePlatformDb" \
-  "Server=localhost,1433;Database=OnePlatformDb;User Id=sa;Password=YourStrongPassword123!;TrustServerCertificate=True;"
+  "ConnectionStrings:Clearing" \
+  "Server=localhost,1433;Database=OnePlatformDb;User Id=sa;Password=MyStrongPassword123!;TrustServerCertificate=True;"
 
 ```
 

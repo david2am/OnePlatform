@@ -4,9 +4,11 @@ namespace OnePlatform.Clearing.Domain.ValueObjects;
 
 public sealed record PartyDetails
 {
-  public string AccountNumber { get; }
-  public string Name { get; }
+  public string AccountNumber { get; } = string.Empty;
+  public string Name { get; } = string.Empty;
   public Guid InstitutionId { get; }
+
+  private PartyDetails() {}
   private PartyDetails(
     string accountNumber,
     string name,

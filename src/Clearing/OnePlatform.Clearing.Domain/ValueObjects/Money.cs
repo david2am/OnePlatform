@@ -7,6 +7,7 @@ public sealed record Money
   public long Amount { get; }
   public string Currency { get; } = string.Empty;
 
+  private Money() { }
   private Money(long amount, string currency)
   {
     Amount = amount;
