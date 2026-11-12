@@ -7,12 +7,10 @@ namespace OnePlatform.Clearing.Domain.Entities;
 
 public sealed class Payment : AggregateRoot
 {
-  // ISO 20022 Max35Text
-  private const int MaxIdLength = 35;
 
   private Payment() : base(Guid.Empty) {
-    MessageId = string.Empty;
-    EndToEndId = string.Empty;
+    MessageId = null!;
+    EndToEndId = null!;
     Amount = null!;
     Debtor = null!;
     Creditor = null!;
@@ -21,8 +19,8 @@ public sealed class Payment : AggregateRoot
 
   private Payment(
     Guid id,
-    string messageId,
-    string endToEndId,
+    MessageId messageId,
+    EndToEndId endToEndId,
     Money amount,
     PartyDetails debtor,
     PartyDetails creditor,
@@ -40,9 +38,9 @@ public sealed class Payment : AggregateRoot
   }
 
   // ISO 20022 message identifiers.
-  public string MessageId { get; private set; }
-  public string EndToEndId { get; private set; }
-  // returf_of another InstitutionId
+  public MessageId MessageId { get; private set; }
+  public EndToEndId EndToEndId { get; private set; }
+  // returf_of another PaymentId
   public Guid ReturnOf { get; private set; }
 
   public Money Amount { get; private set; }
@@ -60,8 +58,8 @@ public sealed class Payment : AggregateRoot
   public IReadOnlyCollection<StatusEvent> StatusEvents => _statusEvents.AsReadOnly();
 
   public static Result<Payment> Receive(
-    string messageId,
-    string endToEndId,
+    MessageId messageId,
+    EndToEndId endToEndId,
     Money amount,
     PartyDetails debtor,
     PartyDetails creditor,
@@ -69,21 +67,6 @@ public sealed class Payment : AggregateRoot
     DateTimeOffset receivedAt
   )
   {
-    var msgId = messageId?.Trim();
-    var e2eId = endToEndId?.Trim();
-
-    if (string.IsNullOrEmpty(msgId))
-      return Result.Failure<Payment>(PaymentErrors.MessageIdRequired);
-
-    if (msgId.Length > MaxIdLength)
-      return Result.Failure<Payment>(PaymentErrors.MessageIdTooLong);
-
-    if (string.IsNullOrEmpty(e2eId))
-      return Result.Failure<Payment>(PaymentErrors.EndToEndIdRequired);
-
-    if (e2eId.Length > MaxIdLength)
-      return Result.Failure<Payment>(PaymentErrors.EndToEndIdTooLong);
-
     if (amount is null)
       return Result.Failure<Payment>(PaymentErrors.AmountRequired);
 
@@ -95,8 +78,8 @@ public sealed class Payment : AggregateRoot
     
     var payment = new Payment(
       Guid.CreateVersion7(),
-      msgId,
-      e2eId,
+      messageId,
+      endToEndId,
       amount,
       debtor,
       creditor,
@@ -242,26 +225,6 @@ public static class PaymentErrors
   public static readonly Error InvalidOutcome = new(
     "Payment.InvalidOutcome",
     "Validation outcome is not valid."
-  );
-
-  public static readonly Error MessageIdRequired = new(
-    "Payment.MessageIdRequired",
-    "Message id is required."
-  );
-  
-  public static readonly Error MessageIdTooLong = new(
-    "Payment.MessageIdTooLong",
-    "Message id is too long."
-  );
-
-  public static readonly Error EndToEndIdRequired = new(
-    "Payment.EndToEndIdRequired",
-    "End-to-end id is required."
-  );
-  
-  public static readonly Error EndToEndIdTooLong = new(
-    "Payment.EndToEndIdTooLong",
-    "End-to-end id is too long."
   );
   
   public static readonly Error AmountRequired = new(
