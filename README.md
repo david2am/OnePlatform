@@ -40,32 +40,6 @@ curl -X POST http://localhost:5221/api/payments \
 
 The current `POST /api/payments` endpoint is a placeholder: it returns the text `dumb message` and does not yet process the request body. You can also run the sample request in `onePlatform.http` with the VS Code REST Client extension.
 
-## Create the DB
-
-Install Docket Desktop, then create the docker image through:
-
-```bash
-docker run \
-  --name oneplatform-sql \
-  -e "ACCEPT_EULA=Y" \
-  -e "MSSQL_SA_PASSWORD=MyStrongPassword123!" \
-  -p 1433:1433 \
-  -d mcr.microsoft.com/mssql/server:2022-latest
-
-```
-
-# Check if SQL Server is running
-docker ps
-
-# Stop SQL Server
-docker stop oneplatform-sql
-
-# Start it again
-docker start oneplatform-sql
-
-# View logs
-docker logs oneplatform-sql
-
 
 ## Store Secrets
 
@@ -80,7 +54,20 @@ dotnet user-secrets set \
 
 ```
 
-## Create DB
+## Create the DB
+
+Install Docket Desktop, then create the docker image through:
+
+```bash
+docker run \
+  --name oneplatform-sql \
+  -e "ACCEPT_EULA=Y" \
+  -e "MSSQL_SA_PASSWORD=MyStrongPassword123!" \
+  -p 1433:1433 \
+  -d mcr.microsoft.com/mssql/server:2022-latest
+
+```
+
 
 ```sh
 dotnet ef database update \

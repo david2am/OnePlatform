@@ -57,13 +57,15 @@ public sealed class Institution : AggregateRoot
     );
   }
 
-  public void EnrollAsMember(DateTimeOffset since)
+  public Result EnrollAsMember(DateTimeOffset since)
   {
     if (IsMember)
-      throw new InvalidOperationException("Institution is already a member.");
+      return Result.Failure(InstitutionErrors.AlreadyMember);
 
     IsMember = true;
     MembershipSince = since;
+
+    return Result.Success();
   }
 }
 

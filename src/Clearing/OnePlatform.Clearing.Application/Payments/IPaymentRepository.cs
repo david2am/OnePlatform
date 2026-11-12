@@ -1,4 +1,5 @@
 using OnePlatform.Clearing.Domain.Entities;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Application.Payments;
 
@@ -10,7 +11,7 @@ public interface IPaymentRepository
   );
 
   Task<Payment?> GetByE2EAsync(
-    string e2eId,
+    EndToEndId e2eId,
     CancellationToken ct = default
   );
 }

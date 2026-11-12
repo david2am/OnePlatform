@@ -26,7 +26,6 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Institution", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsMember")
@@ -37,15 +36,20 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("RoutingNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Institutions");
+                    b.HasIndex("RoutingNumber")
+                        .IsUnique();
+
+                    b.ToTable("Institutions", (string)null);
                 });
 
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Payment", b =>
@@ -56,14 +60,16 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.Property<string>("EndToEndId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(35)
+                        .HasColumnType("nvarchar(35)");
 
                     b.Property<DateTimeOffset>("InitiatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("MessageId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(35)
+                        .HasColumnType("nvarchar(35)");
 
                     b.Property<int>("PaymentType")
                         .HasColumnType("int");

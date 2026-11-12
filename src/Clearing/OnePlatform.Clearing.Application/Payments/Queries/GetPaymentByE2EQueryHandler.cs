@@ -1,5 +1,6 @@
 using OnePlatform.Clearing.Application.Abstractions;
 using OnePlatform.Clearing.Domain.Shared;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Application.Payments.Queries;
 
@@ -17,7 +18,11 @@ public sealed class GetPaymentByIdQueryHandler
     CancellationToken ct
   )
   {
-    var payment = await _payments.GetByE2EAsync(request.E2EId, ct);
+    var e2eIdResult = EndToEndId.Create(request.E2EId);
+    if (e2eIdResult.IsFailure)
+      return Result.Failure<PaymentResponse>(e2eIdResult.Error);
+
+    var payment = await _payments.GetByE2EAsync(e2eIdResult.Value, ct);
 
     if (payment is null)
       return Result.Failure<PaymentResponse>(

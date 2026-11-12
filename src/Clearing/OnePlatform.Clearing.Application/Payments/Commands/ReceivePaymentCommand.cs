@@ -5,8 +5,8 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 namespace OnePlatform.Clearing.Application.Payments.Commands;
 
 public sealed record ReceivePaymentCommand(
-  string MessageId,
-  string EndToEndId,
+  MessageId MessageId,
+  EndToEndId EndToEndId,
   Money Amount,
   PartyDetails Debtor,
   PartyDetails Creditor,
