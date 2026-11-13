@@ -5,7 +5,7 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 namespace OnePlatform.Clearing.Application.Payments.Queries;
 
 public sealed class GetPaymentByIdQueryHandler
-  : IQueryHandler<GetPaymentByE2EQuery, PaymentResponse>
+  : IQueryHandler<GetPaymentByE2EIdQuery, PaymentResponse>
 {
   private readonly IPaymentRepository _payments;
 
@@ -14,7 +14,7 @@ public sealed class GetPaymentByIdQueryHandler
     _payments = paymentRepository;
   }
   public async Task<Result<PaymentResponse>> Handle(
-    GetPaymentByE2EQuery request,
+    GetPaymentByE2EIdQuery request,
     CancellationToken ct
   )
   {
@@ -22,7 +22,7 @@ public sealed class GetPaymentByIdQueryHandler
     if (e2eIdResult.IsFailure)
       return Result.Failure<PaymentResponse>(e2eIdResult.Error);
 
-    var payment = await _payments.GetByE2EAsync(e2eIdResult.Value, ct);
+    var payment = await _payments.GetByE2EIdAsync(e2eIdResult.Value, ct);
 
     if (payment is null)
       return Result.Failure<PaymentResponse>(

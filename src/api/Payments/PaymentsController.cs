@@ -26,12 +26,12 @@ public sealed class PaymentsController(ISender sender) : ControllerBase
   }
 
   [HttpGet("{e2eId}")]
-  public async Task<IActionResult> GetById(
+  public async Task<IActionResult> GetByE2EId(
     string e2eId,
     CancellationToken ct
   )
   {
-    var query = new GetPaymentByE2EQuery(e2eId);
+    var query = new GetPaymentByE2EIdQuery(e2eId);
 
     var response = await sender.Send(query, ct);
 

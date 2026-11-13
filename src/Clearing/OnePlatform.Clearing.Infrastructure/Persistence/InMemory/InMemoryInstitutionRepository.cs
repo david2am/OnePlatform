@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using OnePlatform.Clearing.Application.Institutions;
 using OnePlatform.Clearing.Domain.Entities;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 
@@ -14,8 +15,11 @@ internal class InMemoryInstitutionRepository : InMemoryRepository<Institution>, 
     return Task.CompletedTask;
   }
 
-  public Task<Institution?> GetById(Guid id) =>
-    Task.FromResult(Find(id));
+  public Task<Institution?> GetByRoutingNumberAsync(
+    RoutingNumber routingNumber,
+    CancellationToken cancellationToken
+  ) =>
+    Task.FromResult(Find(i => i.RoutingNumber == routingNumber));
 
   public Task<IReadOnlyList<Institution>> GetAllAsync(CancellationToken ct) =>
     Task.FromResult<IReadOnlyList<Institution>>(All().ToList());

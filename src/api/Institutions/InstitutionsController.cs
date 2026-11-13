@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnePlatform.Clearing.Application.Institutions.Queries;
 using OnePlatform.Clearing.Domain.Shared;
 
 namespace OnePlatform.Api.Institutions;
@@ -25,7 +26,22 @@ public sealed class InstitutionsController(ISender sender) : ControllerBase
       : BadRequest(result.Error);
   }
 
-    private ObjectResult ToProblem(Error error) => Problem(
+  [HttpGet("{routingNumber}")]
+  public async Task<IActionResult> GetByRoutingNumber(
+    string routingNumber,
+    CancellationToken ct
+  )
+  {
+    var query =new GetInstitutionByRoutingNumberQuery(routingNumber);
+
+    var response = await sender.Send(query, ct);
+
+    return response.IsSuccess
+      ? Ok(response.Value)
+      : NotFound(response.Error);
+  }
+
+  private ObjectResult ToProblem(Error error) => Problem(
     title: error.Code,
     detail: error.Message,
     statusCode: error.Type switch

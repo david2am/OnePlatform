@@ -4,7 +4,7 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Application.Payments.Queries;
 
-public sealed record GetPaymentByE2EQuery(string E2EId) : IQuery<PaymentResponse>;
+public sealed record GetPaymentByE2EIdQuery(string E2EId) : IQuery<PaymentResponse>;
 
 public sealed record PaymentResponse(
   EndToEndId EndToEndId,

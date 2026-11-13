@@ -10,7 +10,7 @@ public interface IPaymentRepository
     CancellationToken ct = default
   );
 
-  Task<Payment?> GetByE2EAsync(
+  Task<Payment?> GetByE2EIdAsync(
     EndToEndId e2eId,
     CancellationToken ct = default
   );

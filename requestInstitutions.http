@@ -21,3 +21,7 @@ Content-Type: application/json
   "RoutingNumber": "123",
   "IsMember": true
 }
+
+### get 
+GET {{baseUrl}}/api/institutions/021000021
+Accept: application/json

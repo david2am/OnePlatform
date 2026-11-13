@@ -25,9 +25,9 @@ public static class DependencyInjection
       );
 
     services.AddSingleton<TimeProvider>(TimeProvider.System);
-    // TODO: create PaymentRepository
-    services.AddSingleton<IPaymentRepository, InMemoryPaymentRepository>();
-    services.AddSingleton<IInstitutionRepository, InMemoryInstitutionRepository>();
+
+    services.AddScoped<IPaymentRepository, PaymentRepository>();
+    services.AddScoped<IInstitutionRepository, InstitutionRepository>();
 
     return services;
   }
