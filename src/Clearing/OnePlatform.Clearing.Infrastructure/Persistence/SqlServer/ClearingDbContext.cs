@@ -5,8 +5,9 @@ namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
 
 public class ClearingDbContext : DbContext
 {
-  public ClearingDbContext(DbContextOptions<ClearingDbContext> options)
-    : base (options)
+  public ClearingDbContext(
+    DbContextOptions<ClearingDbContext> options
+  ) : base (options)
   {}
 
   public DbSet<Payment> Payments => Set<Payment>();

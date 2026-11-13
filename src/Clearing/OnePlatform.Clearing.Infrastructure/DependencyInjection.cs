@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using OnePlatform.Clearing.Application.Payments;
 using OnePlatform.Clearing.Application.Institutions;
-using OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 
 namespace OnePlatform.Clearing.Infrastructure;
 
