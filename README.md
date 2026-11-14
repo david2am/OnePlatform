@@ -68,16 +68,22 @@ docker run \
 
 ```
 
-
 ```sh
-dotnet ef database update \
+# 1. Delete the database
+dotnet ef database drop \
+  --project src/Clearing/OnePlatform.Clearing.Infrastructure \
+  --startup-project . \
+  --force
+
+# 2. Delete the whole Migrations folder (files and snapshot) by hand
+
+# 3. Create one fresh migration
+dotnet ef migrations add Initial \
   --project src/Clearing/OnePlatform.Clearing.Infrastructure \
   --startup-project .
 
-```
-
-```sh
-dotnet ef migrations add <MigrationName> \
+# 4. Apply it
+dotnet ef database update \
   --project src/Clearing/OnePlatform.Clearing.Infrastructure \
   --startup-project .
 

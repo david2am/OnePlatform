@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Domain.Entities;
 using OnePlatform.Clearing.Domain.ValueObjects;
 
-namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
+namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Configurations;
 
 public sealed class InstitutionConfiguration
   : IEntityTypeConfiguration<Institution>

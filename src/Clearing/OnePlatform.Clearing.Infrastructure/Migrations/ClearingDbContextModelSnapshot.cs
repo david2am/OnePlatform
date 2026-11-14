@@ -55,7 +55,6 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Payment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EndToEndId")
@@ -74,7 +73,7 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     b.Property<int>("PaymentType")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ReturnOf")
+                    b.Property<Guid?>("ReturnOf")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
@@ -161,7 +160,7 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("StatusEvent");
+                    b.ToTable("StatusEvents", (string)null);
                 });
 
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.ValidationResult", b =>
@@ -186,7 +185,7 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("ValidationResult");
+                    b.ToTable("ValidationResults", (string)null);
                 });
 
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.StatusEvent", b =>

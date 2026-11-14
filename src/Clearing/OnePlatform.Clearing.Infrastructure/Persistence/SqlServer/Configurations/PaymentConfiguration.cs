@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Domain.Entities;
 using OnePlatform.Clearing.Domain.ValueObjects;
 
-namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
+namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Configurations;
 
 public sealed class PaymentConfiguration
   : IEntityTypeConfiguration<Payment>
@@ -22,6 +22,12 @@ public sealed class PaymentConfiguration
            .HasConversion(id => id.Value, value => MessageId.Create(value).Value)
            .HasMaxLength(35)
            .IsRequired();
+
+     builder.Property(p => p.ReturnOf)
+       .HasConversion(
+         id => id!.Value,
+         value => PaymentId.Create(value).Value
+       );
     
     builder.ComplexProperty(p => p.Amount, money =>
     {
