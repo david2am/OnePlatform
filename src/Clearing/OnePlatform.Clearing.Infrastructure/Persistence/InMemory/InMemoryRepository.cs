@@ -3,13 +3,15 @@ using OnePlatform.Clearing.Domain.Entities;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 
-internal abstract class InMemoryRepository<T> where T : Entity
+internal abstract class InMemoryRepository<T, TId>
+  where T : Entity<TId>
+  where TId : notnull
 {
-  private readonly ConcurrentDictionary<Guid, T> _store = new();
+  private readonly ConcurrentDictionary<TId, T> _store = new();
 
   protected void Save(T entity) => _store[entity.Id] = entity;
 
-  protected T? Find(Guid id) =>
+  protected T? Find(TId id) =>
     _store.TryGetValue(id, out var entity) ? entity : null;
 
   protected T? Find(Func<T, bool> predicate) =>

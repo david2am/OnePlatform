@@ -1,12 +1,11 @@
 using OnePlatform.Clearing.Domain.Enums;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.DomainEvents;
 
 public sealed record PaymentReceivedDomainEvent(
-  Guid paymentId,
+  PaymentId paymentId,
   PaymentEventType eventType,
   DateTimeOffset receivedAt,
-  string? details) : IDomainEvent
-{
-  
-}
+  string? details
+) : IDomainEvent;

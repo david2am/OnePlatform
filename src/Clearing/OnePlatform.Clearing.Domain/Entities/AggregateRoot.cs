@@ -1,10 +1,10 @@
 using OnePlatform.Clearing.Domain.DomainEvents;
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public abstract class AggregateRoot : Entity
+public abstract class AggregateRoot<TId> : Entity<TId> where TId : notnull
 {
   private readonly List<IDomainEvent> _domainEvents = new();
-  protected AggregateRoot(Guid id) : base(id)
+  protected AggregateRoot(TId id) : base(id)
   {
   }
 

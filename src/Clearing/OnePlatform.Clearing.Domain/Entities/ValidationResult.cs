@@ -1,14 +1,18 @@
 using OnePlatform.Clearing.Domain.Enums;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class ValidationResult : Entity
+public sealed class ValidationResult : Entity<Guid>
 {
-  private ValidationResult() : base(Guid.Empty) {}
+  private ValidationResult() : base(Guid.Empty)
+  {
+    PaymentId = null!;
+  }
 
   private ValidationResult(
     Guid id,
-    Guid paymentId,
+    PaymentId paymentId,
     ValidationCheckType checkType,
     ValidationOutcome outcome,
     DateTimeOffset checkedAt
@@ -20,7 +24,7 @@ public sealed class ValidationResult : Entity
     CheckedAt = checkedAt;
   }
 
-  public Guid PaymentId { get; private set; }
+  public PaymentId PaymentId { get; private set; }
   public ValidationCheckType CheckType { get; private set; }
   public ValidationOutcome Outcome { get; private set; }
   public DateTimeOffset CheckedAt { get; private set; }
@@ -28,12 +32,12 @@ public sealed class ValidationResult : Entity
   public bool Passed => Outcome == ValidationOutcome.Pass;
 
   internal static ValidationResult Create(
-    Guid paymentId,
+    PaymentId paymentId,
     ValidationCheckType checkType,
     ValidationOutcome outcome,
     DateTimeOffset checkedAt)
   {
-    if (paymentId == Guid.Empty)
+    if (paymentId is null)
       throw new ArgumentException("Payment Id is required.", nameof(paymentId));
 
     return new(Guid.CreateVersion7(), paymentId, checkType, outcome, checkedAt);

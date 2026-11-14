@@ -5,7 +5,8 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 
-internal class InMemoryPaymentRepository : InMemoryRepository<Payment>, IPaymentRepository
+internal class InMemoryPaymentRepository
+  : InMemoryRepository<Payment, PaymentId>, IPaymentRepository
 {
   public Task AddAsync(Payment payment, CancellationToken ct)
   {

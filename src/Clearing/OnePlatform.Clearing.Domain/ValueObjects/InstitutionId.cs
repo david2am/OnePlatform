@@ -2,23 +2,18 @@ using OnePlatform.Clearing.Domain.Shared;
 
 namespace OnePlatform.Clearing.Domain.ValueObjects;
 
-public sealed record InstitutionId
+public sealed record InstitutionId : IGuidId<InstitutionId>
 {
   public Guid Value { get; }
 
-  private InstitutionId() {}
-  private InstitutionId(Guid value)
-  {
-    Value = value;
-  }
+  private InstitutionId(Guid value) => Value = value;
 
-  public static Result<InstitutionId> Create(Guid value)
-  {
-    if (value == Guid.Empty)
-      return Result.Failure<InstitutionId>(InstitutionIdErrors.Required);
+  public static InstitutionId FromGuid(Guid value) => new(value);
 
-    return Result.Success(new InstitutionId(value));
-  }
+  public static Result<InstitutionId> Create(Guid value) =>
+    value == Guid.Empty
+      ? Result.Failure<InstitutionId>(InstitutionIdErrors.Required)
+      : Result.Success(new InstitutionId(value));
 
   public static InstitutionId New() => new(Guid.CreateVersion7());
 }

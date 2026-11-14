@@ -1,14 +1,18 @@
 using OnePlatform.Clearing.Domain.Enums;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class StatusEvent : Entity
+public sealed class StatusEvent : Entity<Guid>
 {
-  private StatusEvent() : base(Guid.Empty) {}
+  private StatusEvent() : base(Guid.Empty)
+  {
+    PaymentId = null!;
+  }
 
   private StatusEvent(
     Guid id,
-    Guid paymentId,
+    PaymentId paymentId,
     PaymentEventType eventType,
     DateTimeOffset occurredAt,
     string? details
@@ -20,13 +24,13 @@ public sealed class StatusEvent : Entity
     Details = details;
   }
 
-  public Guid PaymentId { get; private set; }
+  public PaymentId PaymentId { get; private set; }
   public PaymentEventType EventType { get; private set; }
   public DateTimeOffset OccurredAt { get; private set; }
   public string? Details { get; private set; }
 
   internal static StatusEvent Create (
-    Guid paymentId,
+    PaymentId paymentId,
     PaymentEventType eventType,
     DateTimeOffset occurredAt,
     string? details

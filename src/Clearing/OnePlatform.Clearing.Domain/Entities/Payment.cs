@@ -5,10 +5,10 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class Payment : AggregateRoot
+public sealed class Payment : AggregateRoot<PaymentId>
 {
 
-  private Payment() : base(Guid.Empty) {
+  private Payment() : base(null!) {
     MessageId = null!;
     EndToEndId = null!;
     Amount = null!;
@@ -18,7 +18,7 @@ public sealed class Payment : AggregateRoot
   }
 
   private Payment(
-    Guid id,
+    PaymentId id,
     MessageId messageId,
     EndToEndId endToEndId,
     Money amount,
@@ -41,7 +41,7 @@ public sealed class Payment : AggregateRoot
   public MessageId MessageId { get; private set; }
   public EndToEndId EndToEndId { get; private set; }
   // returf_of another PaymentId
-  public Guid ReturnOf { get; private set; }
+  public PaymentId? ReturnOf { get; private set; }
 
   public Money Amount { get; private set; }
   public PartyDetails Debtor { get; private set; }
@@ -76,8 +76,12 @@ public sealed class Payment : AggregateRoot
     if (debtor.InstitutionId == creditor.InstitutionId && debtor.AccountNumber == creditor.AccountNumber)
       return Result.Failure<Payment>(PaymentErrors.SameAccount);
     
+    var paymentIdResult = PaymentId.Create(Guid.CreateVersion7());
+    if (paymentIdResult.IsFailure)
+        return Result.Failure<Payment>(paymentIdResult.Error);
+    
     var payment = new Payment(
-      Guid.CreateVersion7(),
+      paymentIdResult.Value,
       messageId,
       endToEndId,
       amount,
@@ -88,7 +92,7 @@ public sealed class Payment : AggregateRoot
 
     payment._statusEvents.Add(
       StatusEvent.Create(
-        payment.Id,
+        paymentIdResult.Value,
         PaymentEventType.Received,
         receivedAt,
         null)
@@ -209,6 +213,7 @@ private static readonly ValidationCheckType[] _requiredChecks =
       return Result.Failure(PaymentErrors.InvalidTransition);
 
     Status = next;
+
     _statusEvents.Add(StatusEvent.Create(Id, eventType, at, details));
 
     return Result.Success();

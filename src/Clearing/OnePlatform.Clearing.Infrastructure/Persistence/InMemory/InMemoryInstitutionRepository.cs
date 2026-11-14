@@ -5,7 +5,8 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.InMemory;
 
-internal class InMemoryInstitutionRepository : InMemoryRepository<Institution>, IInstitutionRepository
+internal class InMemoryInstitutionRepository
+  : InMemoryRepository<Institution, InstitutionId>, IInstitutionRepository
 {
   private readonly ConcurrentDictionary<Guid, Institution> _store = new();
 

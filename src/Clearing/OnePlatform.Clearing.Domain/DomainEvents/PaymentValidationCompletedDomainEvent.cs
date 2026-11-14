@@ -1,10 +1,9 @@
 using OnePlatform.Clearing.Domain.Enums;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.DomainEvents;
 
 public sealed record PaymentValidationCompletedDomainEvent(
-  Guid paymentId,
-  DateTimeOffset completedAt) : IDomainEvent
-{
-  
-}
+  PaymentId paymentId,
+  DateTimeOffset completedAt
+) : IDomainEvent;

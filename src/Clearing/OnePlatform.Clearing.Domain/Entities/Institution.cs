@@ -3,7 +3,7 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class Institution : AggregateRoot
+public sealed class Institution : AggregateRoot<InstitutionId>
 {
   public string Name { get; private set; } = string.Empty;
 
@@ -12,7 +12,7 @@ public sealed class Institution : AggregateRoot
   public DateTimeOffset? MembershipSince { get; private set; }
 
 
-  private Institution() : base(Guid.Empty)
+  private Institution() : base(null!)
   {
     RoutingNumber = null!;
   }
@@ -22,7 +22,7 @@ public sealed class Institution : AggregateRoot
     string name,
     RoutingNumber routingNumber,
     bool isMember,
-    DateTimeOffset? membershipSince) : base(id.Value)
+    DateTimeOffset? membershipSince) : base(id)
   {
     Name = name;
     RoutingNumber = routingNumber;

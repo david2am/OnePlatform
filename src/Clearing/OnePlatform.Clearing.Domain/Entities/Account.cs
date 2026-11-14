@@ -1,14 +1,15 @@
 using OnePlatform.Clearing.Domain.Enums;
 using OnePlatform.Clearing.Domain.Shared;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Domain.Entities;
 
-public sealed class Account : AggregateRoot
+public sealed class Account : AggregateRoot<AccountId>
 {
-  private Account(Guid id) : base(id){}
+  private Account() : base(null!){}
 
   private Account(
-    Guid id,
+    AccountId id,
     Guid institutionId,
     string accountNumber,
     string currency,
@@ -47,7 +48,7 @@ public sealed class Account : AggregateRoot
 
     return Result.Success(
       new Account(
-        Guid.CreateVersion7(),
+        AccountId.FromGuid(Guid.CreateVersion7()),
         institutionId,
         accountNumber,
         normalizedCurency,
