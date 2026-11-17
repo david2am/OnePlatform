@@ -36,7 +36,6 @@ public sealed class Institution : AggregateRoot<InstitutionId>
     bool isMember,
     DateTimeOffset? membershipSince)
   {
-    // validations
     if (string.IsNullOrWhiteSpace(name))
       return Result.Failure<Institution>(InstitutionErrors.NameRequired);
 

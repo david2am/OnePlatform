@@ -76,12 +76,10 @@ public sealed class Payment : AggregateRoot<PaymentId>
     if (debtor.InstitutionId == creditor.InstitutionId && debtor.AccountNumber == creditor.AccountNumber)
       return Result.Failure<Payment>(PaymentErrors.SameAccount);
     
-    var paymentIdResult = PaymentId.Create(Guid.CreateVersion7());
-    if (paymentIdResult.IsFailure)
-        return Result.Failure<Payment>(paymentIdResult.Error);
-    
+    var PaymentIdValue = PaymentId.New();
+
     var payment = new Payment(
-      paymentIdResult.Value,
+      PaymentIdValue,
       messageId,
       endToEndId,
       amount,
@@ -92,7 +90,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
 
     payment._statusEvents.Add(
       StatusEvent.Create(
-        paymentIdResult.Value,
+        PaymentIdValue,
         PaymentEventType.Received,
         receivedAt,
         null)

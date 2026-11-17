@@ -48,7 +48,7 @@ public sealed class Account : AggregateRoot<AccountId>
 
     return Result.Success(
       new Account(
-        AccountId.FromGuid(Guid.CreateVersion7()),
+        AccountId.New(),
         institutionId,
         accountNumber,
         normalizedCurency,
@@ -57,7 +57,7 @@ public sealed class Account : AggregateRoot<AccountId>
     );
   }
 
-    public Result Freeze()
+  public Result Freeze()
   {
     if (Status == AccountStatus.Closed)
       return Result.Failure(AccountErrors.AccountClosed);
