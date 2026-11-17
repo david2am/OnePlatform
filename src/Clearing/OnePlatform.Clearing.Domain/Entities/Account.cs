@@ -6,11 +6,14 @@ namespace OnePlatform.Clearing.Domain.Entities;
 
 public sealed class Account : AggregateRoot<AccountId>
 {
-  private Account() : base(null!){}
+  private Account() : base(null!)
+  {
+    InstitutionId = null!;
+  }
 
   private Account(
     AccountId id,
-    Guid institutionId,
+    InstitutionId institutionId,
     string accountNumber,
     string currency,
     DateTimeOffset openedAt
@@ -23,21 +26,18 @@ public sealed class Account : AggregateRoot<AccountId>
     Status = AccountStatus.Active;
   }
 
-  public Guid InstitutionId { get; private set; }
+  public InstitutionId InstitutionId { get; private set; }
   public string AccountNumber { get; private set; } = string.Empty;
   public string Currency { get; private set; } = string.Empty;
   public DateTimeOffset OpenedAt { get; private set; }
   public AccountStatus Status { get; private set; }
 
   public static Result<Account> Open(
-    Guid institutionId,
+    InstitutionId institutionId,
     string accountNumber,
     string currency,
     DateTimeOffset openedAt)
   {
-    if (institutionId == Guid.Empty)
-      return Result.Failure<Account>(AccountErrors.InstitutionRequired);
-
     if (!IsValidAccountNumber(accountNumber))
       return Result.Failure<Account>(AccountErrors.InvalidAccountNumber);
 

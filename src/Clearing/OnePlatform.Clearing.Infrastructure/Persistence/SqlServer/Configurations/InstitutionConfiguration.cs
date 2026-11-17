@@ -21,8 +21,12 @@ public sealed class InstitutionConfiguration
            .HasMaxLength(200);
 
     builder.Property(i => i.RoutingNumber)
-           .HasConversion(routingNumber => routingNumber.Value, value => RoutingNumber.Create(value).Value)
+           .HasConversion(
+              routingNumber => routingNumber.Value,
+              value => RoutingNumber.Create(value).Value
+           )
            .HasMaxLength(9)
+           .IsFixedLength()
            .IsRequired();
 
     builder.HasIndex(i => i.RoutingNumber)

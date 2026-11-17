@@ -16,7 +16,8 @@ public sealed class GuidIdConverter<TId> : ValueConverter<TId, Guid>
     var method = typeof(TId).GetMethod(
       nameof(IGuidId<TId>.FromGuid),
       BindingFlags.Public | BindingFlags.Static,
-      [typeof(Guid)])!;
+      [typeof(Guid)]
+    )!;
 
     var parameter = Expression.Parameter(typeof(Guid), "value");
 

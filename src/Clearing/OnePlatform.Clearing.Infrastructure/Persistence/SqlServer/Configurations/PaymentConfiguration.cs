@@ -14,18 +14,24 @@ public sealed class PaymentConfiguration
     builder.HasKey(p => p.Id);
 
     builder.Property(p => p.EndToEndId)
-           .HasConversion(id => id.Value, value => EndToEndId.Create(value).Value)
+           .HasConversion(
+               e2eId => e2eId.Value,
+               value => EndToEndId.Create(value).Value
+          )
            .HasMaxLength(35)
            .IsRequired();
 
     builder.Property(p => p.MessageId)
-           .HasConversion(id => id.Value, value => MessageId.Create(value).Value)
+           .HasConversion(
+               msgId => msgId.Value,
+               value => MessageId.Create(value).Value
+          )
            .HasMaxLength(35)
            .IsRequired();
 
      builder.Property(p => p.ReturnOf)
        .HasConversion(
-         id => id!.Value,
+         paymentId => paymentId!.Value,
          value => PaymentId.Create(value).Value
        );
     
