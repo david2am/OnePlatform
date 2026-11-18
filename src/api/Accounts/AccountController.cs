@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnePlatform.Clearing.Application.Accounts.Queries;
 using OnePlatform.Clearing.Domain.Shared;
 
 namespace OnePlatform.Api.Accounts;
@@ -26,6 +27,20 @@ public sealed class AccountController(ISender sender) : ControllerBase
       : BadRequest();
   }
 
+  [HttpGet("{institutionId:guid}")]
+  public async Task<IActionResult> GetByInstitutionId(
+    Guid institutionId,
+    CancellationToken ct
+  )
+  {
+    var query = new GetAccountsByInstitutionIdQuery(institutionId);
+
+    var response = await sender.Send(query, ct);
+
+    return response.IsSuccess
+      ? Ok(response.Value)
+      : NotFound(response.Error);
+  }
   private ObjectResult ToProblem(Error error) => Problem(
     title: error.Code,
     detail: error.Message,

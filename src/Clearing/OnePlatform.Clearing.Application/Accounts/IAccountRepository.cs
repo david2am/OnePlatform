@@ -10,7 +10,7 @@ public interface IAccountRepository
     CancellationToken ct = default
   );
 
-  Task<Account?> GetByInstitutionIdAsync(
+  Task<IReadOnlyList<Account>> GetByInstitutionIdAsync(
     InstitutionId institutionId,
     CancellationToken ct = default
   );

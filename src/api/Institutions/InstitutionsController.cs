@@ -32,7 +32,7 @@ public sealed class InstitutionsController(ISender sender) : ControllerBase
     CancellationToken ct
   )
   {
-    var query =new GetInstitutionByRoutingNumberQuery(routingNumber);
+    var query = new GetInstitutionByRoutingNumberQuery(routingNumber);
 
     var response = await sender.Send(query, ct);
 

@@ -21,13 +21,14 @@ internal class AccountRepository : IAccountRepository
     await _context.SaveChangesAsync(ct);
   }
 
-  public async Task<Account?> GetByInstitutionIdAsync(
+  public async Task<IReadOnlyList<Account>> GetByInstitutionIdAsync(
     InstitutionId institutionId,
     CancellationToken ct
   ) =>
     await _context.Accounts
-        .FirstOrDefaultAsync(
-          a => a.InstitutionId == institutionId,
-          ct
-        );
+      .AsNoTracking()
+      .Where(a => a.InstitutionId == institutionId)
+      .OrderBy(a => a.Currency)
+      .ThenBy(a => a.AccountNumber)
+      .ToListAsync(ct);
 }
