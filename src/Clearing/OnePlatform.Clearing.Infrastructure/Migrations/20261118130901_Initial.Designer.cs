@@ -13,8 +13,8 @@ using OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
 namespace OnePlatform.Clearing.Infrastructure.Migrations
 {
     [DbContext(typeof(ClearingDbContext))]
-    [Migration("20261112192838_AddInstitution")]
-    partial class AddInstitution
+    [Migration("20261118130901_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,46 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Account", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(34)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .IsUnicode(false)
+                        .HasColumnType("char(3)")
+                        .IsFixedLength();
+
+                    b.Property<Guid>("InstitutionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("OpenedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionId", "AccountNumber")
+                        .IsUnique();
+
+                    b.HasIndex("InstitutionId", "Currency")
+                        .IsUnique();
+
+                    b.ToTable("Accounts", (string)null);
+                });
 
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Institution", b =>
                 {
@@ -45,7 +85,8 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     b.Property<string>("RoutingNumber")
                         .IsRequired()
                         .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
+                        .HasColumnType("nchar(9)")
+                        .IsFixedLength();
 
                     b.HasKey("Id");
 
@@ -58,7 +99,6 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Payment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EndToEndId")
@@ -77,7 +117,7 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     b.Property<int>("PaymentType")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ReturnOf")
+                    b.Property<Guid?>("ReturnOf")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
@@ -164,7 +204,7 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("StatusEvent");
+                    b.ToTable("StatusEvents", (string)null);
                 });
 
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.ValidationResult", b =>
@@ -189,7 +229,16 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("ValidationResult");
+                    b.ToTable("ValidationResults", (string)null);
+                });
+
+            modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Account", b =>
+                {
+                    b.HasOne("OnePlatform.Clearing.Domain.Entities.Institution", null)
+                        .WithMany()
+                        .HasForeignKey("InstitutionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.StatusEvent", b =>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnePlatform.Clearing.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,8 +16,8 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoutingNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    RoutingNumber = table.Column<string>(type: "nchar(9)", fixedLength: true, maxLength: 9, nullable: false),
                     IsMember = table.Column<bool>(type: "bit", nullable: false),
                     MembershipSince = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -31,9 +31,9 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MessageId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EndToEndId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReturnOf = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MessageId = table.Column<string>(type: "nvarchar(35)", maxLength: 35, nullable: false),
+                    EndToEndId = table.Column<string>(type: "nvarchar(35)", maxLength: 35, nullable: false),
+                    ReturnOf = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     PaymentType = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     InitiatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -52,7 +52,29 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StatusEvent",
+                name: "Accounts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountNumber = table.Column<string>(type: "varchar(34)", unicode: false, maxLength: 34, nullable: false),
+                    Currency = table.Column<string>(type: "char(3)", unicode: false, fixedLength: true, maxLength: 3, nullable: false),
+                    OpenedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Institutions_InstitutionId",
+                        column: x => x.InstitutionId,
+                        principalTable: "Institutions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StatusEvents",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -63,9 +85,9 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StatusEvent", x => x.Id);
+                    table.PrimaryKey("PK_StatusEvents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StatusEvent_Payments_PaymentId",
+                        name: "FK_StatusEvents_Payments_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payments",
                         principalColumn: "Id",
@@ -73,7 +95,7 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ValidationResult",
+                name: "ValidationResults",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -84,9 +106,9 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ValidationResult", x => x.Id);
+                    table.PrimaryKey("PK_ValidationResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ValidationResult_Payments_PaymentId",
+                        name: "FK_ValidationResults_Payments_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payments",
                         principalColumn: "Id",
@@ -94,13 +116,31 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_StatusEvent_PaymentId",
-                table: "StatusEvent",
+                name: "IX_Accounts_InstitutionId_AccountNumber",
+                table: "Accounts",
+                columns: new[] { "InstitutionId", "AccountNumber" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_InstitutionId_Currency",
+                table: "Accounts",
+                columns: new[] { "InstitutionId", "Currency" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Institutions_RoutingNumber",
+                table: "Institutions",
+                column: "RoutingNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StatusEvents_PaymentId",
+                table: "StatusEvents",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ValidationResult_PaymentId",
-                table: "ValidationResult",
+                name: "IX_ValidationResults_PaymentId",
+                table: "ValidationResults",
                 column: "PaymentId");
         }
 
@@ -108,13 +148,16 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "StatusEvents");
+
+            migrationBuilder.DropTable(
+                name: "ValidationResults");
+
+            migrationBuilder.DropTable(
                 name: "Institutions");
-
-            migrationBuilder.DropTable(
-                name: "StatusEvent");
-
-            migrationBuilder.DropTable(
-                name: "ValidationResult");
 
             migrationBuilder.DropTable(
                 name: "Payments");

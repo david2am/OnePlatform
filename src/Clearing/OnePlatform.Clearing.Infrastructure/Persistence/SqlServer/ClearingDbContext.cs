@@ -14,6 +14,7 @@ public class ClearingDbContext : DbContext
 
   public DbSet<Payment> Payments => Set<Payment>();
   public DbSet<Institution> Institutions => Set<Institution>();
+  public DbSet<Account> Accounts => Set<Account>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -32,5 +33,8 @@ public class ClearingDbContext : DbContext
 
     configurationBuilder.Properties<InstitutionId>()
       .HaveConversion<GuidIdConverter<InstitutionId>>();
+
+    configurationBuilder.Properties<AccountId>()
+      .HaveConversion<GuidIdConverter<AccountId>>();
   }
 }

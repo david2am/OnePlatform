@@ -23,6 +23,46 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Account", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(34)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .IsUnicode(false)
+                        .HasColumnType("char(3)")
+                        .IsFixedLength();
+
+                    b.Property<Guid>("InstitutionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("OpenedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionId", "AccountNumber")
+                        .IsUnique();
+
+                    b.HasIndex("InstitutionId", "Currency")
+                        .IsUnique();
+
+                    b.ToTable("Accounts", (string)null);
+                });
+
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Institution", b =>
                 {
                     b.Property<Guid>("Id")
@@ -42,7 +82,8 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     b.Property<string>("RoutingNumber")
                         .IsRequired()
                         .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
+                        .HasColumnType("nchar(9)")
+                        .IsFixedLength();
 
                     b.HasKey("Id");
 
@@ -186,6 +227,15 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     b.HasIndex("PaymentId");
 
                     b.ToTable("ValidationResults", (string)null);
+                });
+
+            modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.Account", b =>
+                {
+                    b.HasOne("OnePlatform.Clearing.Domain.Entities.Institution", null)
+                        .WithMany()
+                        .HasForeignKey("InstitutionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OnePlatform.Clearing.Domain.Entities.StatusEvent", b =>

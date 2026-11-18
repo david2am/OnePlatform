@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using OnePlatform.Clearing.Application.Payments;
 using OnePlatform.Clearing.Application.Institutions;
+using OnePlatform.Clearing.Application.Accounts;
 
 namespace OnePlatform.Clearing.Infrastructure;
 
@@ -27,6 +28,7 @@ public static class DependencyInjection
 
     services.AddScoped<IPaymentRepository, PaymentRepository>();
     services.AddScoped<IInstitutionRepository, InstitutionRepository>();
+    services.AddScoped<IAccountRepository, AccountRepository>();
 
     return services;
   }

@@ -1,4 +1,3 @@
-using MediatR;
 using OnePlatform.Clearing.Application.Abstractions;
 using OnePlatform.Clearing.Domain.Entities;
 using OnePlatform.Clearing.Domain.ValueObjects;

@@ -16,7 +16,7 @@ public sealed record CreateInstitutionRequest(
     var RoutingNumberResult = RoutingNumberVo.Create(RoutingNumber);
     if (RoutingNumberResult.IsFailure)
       return Result.Failure<CreateInstitutionCommand>(RoutingNumberResult.Error);
-
+    
     var command = new CreateInstitutionCommand(
       Name,
       RoutingNumberResult.Value,
