@@ -8,7 +8,8 @@ public sealed record ReceivePaymentCommand(
   MessageId MessageId,
   EndToEndId EndToEndId,
   Money Amount,
-  PartyDetails Debtor,
-  PartyDetails Creditor,
+  PaymentParty Debtor,
+  PaymentParty Creditor,
+  IReadOnlyCollection<ParticipantInput> Participants,
   DateTimeOffset InitiatedAt
 ) : ICommand<Payment>;

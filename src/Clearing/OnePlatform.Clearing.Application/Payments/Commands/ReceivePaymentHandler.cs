@@ -31,6 +31,7 @@ public sealed class ReceivePaymentHandler : ICommandHandler<ReceivePaymentComman
       command.Amount,
       command.Debtor,
       command.Creditor,
+      command.Participants,
       command.InitiatedAt,
       receivedAt
     );

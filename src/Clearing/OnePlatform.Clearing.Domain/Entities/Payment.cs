@@ -8,6 +8,29 @@ namespace OnePlatform.Clearing.Domain.Entities;
 public sealed class Payment : AggregateRoot<PaymentId>
 {
 
+    // ISO 20022 message identifiers.
+  public MessageId MessageId { get; private set; }
+  public EndToEndId EndToEndId { get; private set; }
+  // returf_of another PaymentId
+  public PaymentId? ReturnOf { get; private set; }
+
+  public Money Amount { get; private set; }
+  public PaymentParty Debtor { get; private set; }
+  public PaymentParty Creditor { get; private set; }
+
+  public PaymentType PaymentType { get; private set; }
+  public PaymentStatus Status { get; private set; }
+  public DateTimeOffset InitiatedAt { get; private set; }
+
+  private readonly List<Participant> _participants = [];
+  public IReadOnlyCollection<Participant> Participants => _participants.AsReadOnly();
+
+  private readonly List<ValidationResult> _validationResults = [];
+  public IReadOnlyCollection<ValidationResult> ValidationResults => _validationResults.AsReadOnly();
+
+  private readonly List<StatusEvent> _statusEvents = [];
+  public IReadOnlyCollection<StatusEvent> StatusEvents => _statusEvents.AsReadOnly();
+
   private Payment() : base(null!) {
     MessageId = null!;
     EndToEndId = null!;
@@ -22,8 +45,9 @@ public sealed class Payment : AggregateRoot<PaymentId>
     MessageId messageId,
     EndToEndId endToEndId,
     Money amount,
-    PartyDetails debtor,
-    PartyDetails creditor,
+    PaymentParty debtor,
+    PaymentParty creditor,
+    IReadOnlyCollection<Participant> participants,
     DateTimeOffset initiatedAt
   ) : base(id)
   {
@@ -32,37 +56,21 @@ public sealed class Payment : AggregateRoot<PaymentId>
     Amount = amount;
     Debtor = debtor;
     Creditor = creditor;
+
+    _participants.AddRange(participants);
+
     InitiatedAt = initiatedAt;
     PaymentType = PaymentType.CreditTransfer;
     Status = PaymentStatus.Pending;
   }
 
-  // ISO 20022 message identifiers.
-  public MessageId MessageId { get; private set; }
-  public EndToEndId EndToEndId { get; private set; }
-  // returf_of another PaymentId
-  public PaymentId? ReturnOf { get; private set; }
-
-  public Money Amount { get; private set; }
-  public PartyDetails Debtor { get; private set; }
-  public PartyDetails Creditor { get; private set; }
-
-  public PaymentType PaymentType { get; private set; }
-  public PaymentStatus Status { get; private set; }
-  public DateTimeOffset InitiatedAt { get; private set; }
-
-  private readonly List<ValidationResult> _validationResults = [];
-  public IReadOnlyCollection<ValidationResult> ValidationResults => _validationResults.AsReadOnly();
-
-  private readonly List<StatusEvent> _statusEvents = [];
-  public IReadOnlyCollection<StatusEvent> StatusEvents => _statusEvents.AsReadOnly();
-
   public static Result<Payment> Receive(
     MessageId messageId,
     EndToEndId endToEndId,
     Money amount,
-    PartyDetails debtor,
-    PartyDetails creditor,
+    PaymentParty debtor,
+    PaymentParty creditor,
+    IReadOnlyCollection<ParticipantInput> participants,
     DateTimeOffset initiatedAt,
     DateTimeOffset receivedAt
   )
@@ -75,8 +83,30 @@ public sealed class Payment : AggregateRoot<PaymentId>
 
     if (debtor.InstitutionId == creditor.InstitutionId && debtor.AccountNumber == creditor.AccountNumber)
       return Result.Failure<Payment>(PaymentErrors.SameAccount);
+
+    var participantsValidation = ValidateParticipants(participants);
+
+    if (participantsValidation.IsFailure)
+        return Result.Failure<Payment>(participantsValidation.Error);
     
     var PaymentIdValue = PaymentId.New();
+
+    var paymentParticipants = new List<Participant>();
+
+    foreach (var participantInput in participants)
+    {
+        var participantResult = Participant.Add(
+            PaymentIdValue,
+            participantInput.InstitutionId,
+            participantInput.AccountId,
+            participantInput.Role
+        );
+
+        if (participantResult.IsFailure)
+            return Result.Failure<Payment>(participantResult.Error);
+
+        paymentParticipants.Add(participantResult.Value);
+    }
 
     var payment = new Payment(
       PaymentIdValue,
@@ -85,6 +115,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
       amount,
       debtor,
       creditor,
+      paymentParticipants,
       initiatedAt
     );
 
@@ -107,6 +138,37 @@ public sealed class Payment : AggregateRoot<PaymentId>
     return Result.Success(payment);
   }
 
+  private static Result ValidateParticipants(
+    IReadOnlyCollection<ParticipantInput> participants
+  )
+  {
+    if (participants is null || participants.Count == 0)
+        return Result.Failure(PaymentErrors.ParticipantsRequired);
+
+    var debtorAgents = participants
+        .Where(p => p.Role == ParticipantRole.DebtorAgent)
+        .ToList();
+
+    if (debtorAgents.Count != 1)
+        return Result.Failure(PaymentErrors.InvalidDebtorAgentCount);
+
+    var creditorAgents = participants
+        .Where(p => p.Role == ParticipantRole.CreditorAgent)
+        .ToList();
+
+    if (creditorAgents.Count != 1)
+        return Result.Failure(PaymentErrors.InvalidCreditorAgentCount);
+
+    var duplicates = participants
+        .GroupBy(p => new { p.InstitutionId, p.Role })
+        .Any(g => g.Count() > 1);
+
+    if (duplicates)
+        return Result.Failure(PaymentErrors.DuplicateParticipants);
+
+    return Result.Success(participants);
+  }
+
   public Result RecordValidationResult(
     ValidationCheckType checkType,
     ValidationOutcome outcome,
@@ -116,7 +178,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
       return Result.Failure(PaymentErrors.InvalidCheckType);
 
     if (!Enum.IsDefined(outcome))
-      return Result.Failure(PaymentErrors.InvalidOutcome);
+      return Result.Failure(PaymentErrors.InvalidOutcome); 
 
     if (Status != PaymentStatus.Pending)
       return Result.Failure(PaymentErrors.NotPending);
@@ -167,10 +229,20 @@ private static readonly ValidationCheckType[] _requiredChecks =
 
     if (failedChecks.Length == 0)
     {
-      RaiseDomainEvent( // TODO: validate later
-        new PaymentValidationCompletedDomainEvent(Id, at)
+      var result = ChangeStatusTo(
+          PaymentStatus.Validated,
+          PaymentEventType.Validated,
+          at
       );
-      return ChangeStatusTo(PaymentStatus.Validated, PaymentEventType.Validated, at);
+
+      if (result.IsFailure)
+          return result;
+
+      RaiseDomainEvent( // TODO: apply unit of work here
+          new PaymentValidationCompletedDomainEvent(Id, at)
+      );
+
+      return Result.Success();
     }
 
     var details = "Failed checks: " + string.Join(", ", failedChecks);
@@ -263,5 +335,25 @@ public static class PaymentErrors
   public static readonly Error SameAccount = new(
     "Payment.SameAccount",
     "Debtor and creditor cannot be the same account."
+  );
+
+  public static readonly Error ParticipantsRequired = new(
+    "Payment.ParticipantsRequired",
+    "Participants are required."
+  );
+
+  public static readonly Error InvalidDebtorAgentCount = new(
+      "Payment.InvalidDebtorAgentCount",
+      "A payment must have exactly one debtor agent."
+  );
+
+  public static readonly Error InvalidCreditorAgentCount = new(
+      "Payment.InvalidCreditorAgentCount",
+      "A payment must have exactly one creditor agent."
+  );
+
+  public static readonly Error DuplicateParticipants = new(
+      "Payment.DuplicateParticipants",
+      "An institution cannot participate more than once with the same role."
   );
 }

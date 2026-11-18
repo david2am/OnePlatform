@@ -2,14 +2,14 @@ using OnePlatform.Clearing.Domain.Shared;
 
 namespace OnePlatform.Clearing.Domain.ValueObjects;
 
-public sealed record PartyDetails
+public sealed record PaymentParty
 {
   public string AccountNumber { get; } = string.Empty;
   public string Name { get; } = string.Empty;
   public Guid InstitutionId { get; }
 
-  private PartyDetails() {}
-  private PartyDetails(
+  private PaymentParty() {}
+  private PaymentParty(
     string accountNumber,
     string name,
     Guid institutionId)
@@ -19,29 +19,29 @@ public sealed record PartyDetails
     InstitutionId = institutionId;
   }
 
-  public static Result<PartyDetails> Create(string accountNumber, string name, Guid institutionId)
+  public static Result<PaymentParty> Create(string accountNumber, string name, Guid institutionId)
   {
     if (string.IsNullOrWhiteSpace(accountNumber))
-      return Result.Failure<PartyDetails>(PartyDetailsErrors.AccountRequired);
+      return Result.Failure<PaymentParty>(PartyDetailsErrors.AccountRequired);
 
     if (string.IsNullOrWhiteSpace(name))
-      return Result.Failure<PartyDetails>(PartyDetailsErrors.NameRequired);
+      return Result.Failure<PaymentParty>(PartyDetailsErrors.NameRequired);
     
     if (institutionId == Guid.Empty)
-      return Result.Failure<PartyDetails>(PartyDetailsErrors.InstitutionIDRequired);
+      return Result.Failure<PaymentParty>(PartyDetailsErrors.InstitutionIDRequired);
 
-    return Result.Success(new PartyDetails(accountNumber.Trim(), name.Trim(), institutionId));
+    return Result.Success(new PaymentParty(accountNumber.Trim(), name.Trim(), institutionId));
   }
 }
 
 public static class PartyDetailsErrors
 {
   public static readonly Error AccountRequired = new(
-    "PartyDetails.AccountRequired", "Member account is required.");
+    "PaymentParty.AccountRequired", "Member account is required.");
 
   public static readonly Error NameRequired = new(
-    "PartyDetails.NameRequired", "Member name is required.");
+    "PaymentParty.NameRequired", "Member name is required.");
 
   public static readonly Error InstitutionIDRequired = new(
-    "PartyDetails.InstitutionIDRequired", "InstitutionId is required.");
+    "PaymentParty.InstitutionIDRequired", "InstitutionId is required.");
 }
