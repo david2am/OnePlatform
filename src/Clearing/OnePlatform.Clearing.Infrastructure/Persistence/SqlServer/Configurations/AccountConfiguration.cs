@@ -1,51 +1,56 @@
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Domain.Entities;
-using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Configurations;
 
 public sealed class AccountConfiguration
-  : IEntityTypeConfiguration<Account>
+    : IEntityTypeConfiguration<Account>
 {
-  public void Configure(EntityTypeBuilder<Account> builder)
-  {
-    builder.ToTable("Accounts");
-    builder.HasKey(i => i.Id);
+    public void Configure(EntityTypeBuilder<Account> builder)
+    {
+        builder.ToTable("Accounts");
 
-    builder.Property(i => i.Id)
-           .ValueGeneratedNever();
+        builder.HasKey(a => a.Id);
 
-    builder.HasOne<Institution>()
-           .WithMany()
-           .HasForeignKey(a => a.InstitutionId)
-           .OnDelete(DeleteBehavior.Restrict);
+        // foreign key relationship
+        builder.HasOne<Institution>()
+               .WithMany()
+               .HasForeignKey(a => a.InstitutionId)
+               .OnDelete(DeleteBehavior.Restrict);
 
-    // Plain columns
-    builder.Property(a => a.AccountNumber)
-           .HasMaxLength(34)
-           .IsUnicode(false)
-           .IsRequired();
+        // Plain columns
+        builder.Property(a => a.AccountNumber)
+               .HasMaxLength(34)
+               .IsUnicode(false)
+               .IsRequired();
 
-    builder.Property(a => a.Currency)
-           .HasMaxLength(3)
-           .IsFixedLength()
-           .IsUnicode(false)
-           .IsRequired();
+        builder.Property(a => a.Currency)
+               .HasColumnType("char(3)")
+               .IsUnicode(false)
+               .IsRequired();
 
-    builder.Property(a => a.Status)
-           .HasConversion<string>()
-           .HasMaxLength(10)
-           .IsRequired();
+        builder.Property(a => a.Status)
+               .HasConversion<string>()
+               .HasMaxLength(10)
+               .IsRequired();
 
-    builder.Property(a => a.OpenedAt)
-           .IsRequired();
+        builder.Property(a => a.OpenedAt)
+               .IsRequired();
 
-    // Indexes
-    builder.HasIndex(a => new { a.InstitutionId, a.AccountNumber })
-           .IsUnique();
+        builder.HasIndex(a => new
+               {
+                   a.InstitutionId,
+                   a.AccountNumber
+               })
+               .IsUnique();
 
-    builder.HasIndex(a => new { a.InstitutionId, a.Currency })
-           .IsUnique();
-  }
+        builder.HasIndex(a => new
+               {
+                   a.InstitutionId,
+                   a.Currency
+               })
+               .IsUnique();
+    }
 }

@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Domain.Entities;
@@ -5,94 +6,138 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Configurations;
 
-public sealed class PaymentConfiguration
-  : IEntityTypeConfiguration<Payment>
+public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
-  public void Configure(EntityTypeBuilder<Payment> builder)
-  {
-    builder.ToTable("Payments");
-    builder.HasKey(p => p.Id);
-
-    builder.Property(p => p.EndToEndId)
-           .HasConversion(
-               e2eId => e2eId.Value,
-               value => EndToEndId.Create(value).Value
-          )
-           .HasMaxLength(35)
-           .IsRequired();
-
-    builder.Property(p => p.MessageId)
-           .HasConversion(
-               msgId => msgId.Value,
-               value => MessageId.Create(value).Value
-          )
-           .HasMaxLength(35)
-           .IsRequired();
-
-     builder.Property(p => p.ReturnOf)
-       .HasConversion(
-         paymentId => paymentId!.Value,
-         value => PaymentId.Create(value).Value
-       );
-    
-    builder.ComplexProperty(p => p.Amount, money =>
+    public void Configure(EntityTypeBuilder<Payment> builder)
     {
-      money.Property(m => m.Amount)
-           .HasColumnName("Amount")
-           .HasColumnType("bigint")
-           .IsRequired();
+        builder.ToTable("Payments");
 
-      money.Property(m => m.Currency)
-           .HasColumnName("Currency")
-           .HasMaxLength(3)
-           .IsUnicode(false)
-           .IsRequired();
-    });
+        builder.HasKey(p => p.Id);
 
-    builder.ComplexProperty(p => p.Debtor, party =>
-    {
-      party.Property("AccountNumber")
-           .HasColumnName("DebtorAccountNumber")
-           .IsRequired();
+        builder.Property(p => p.Id)
+            .ValueGeneratedNever();
 
-      party.Property("Name")
-           .HasColumnName("DebtorName")
-           .IsRequired();
+        // ISO 20022 identifiers
+        builder.Property(p => p.MessageId)
+            .HasConversion(
+                id => id.Value,
+                value => MessageId.Create(value).Value)
+            .HasMaxLength(35)
+            .IsRequired();
 
-      party.Property("InstitutionId")
-           .HasColumnName("DebtorInstitutionId")
-           .IsRequired();
-    });
+        builder.Property(p => p.EndToEndId)
+            .HasConversion(
+                id => id.Value,
+                value => EndToEndId.Create(value).Value)
+            .HasMaxLength(35)
+            .IsRequired();
 
-    builder.ComplexProperty(p => p.Creditor, party =>
-    {
-      party.Property("AccountNumber")
-           .HasColumnName("CreditorAccountNumber")
-           .IsRequired();
+        // Return relationship
+        builder.HasOne<Payment>()
+            .WithMany()
+            .HasForeignKey(p => p.ReturnOf)
+            .OnDelete(DeleteBehavior.Restrict);
 
-      party.Property("Name")
-           .HasColumnName("CreditorName")
-           .IsRequired();
+        // Payment properties
+        builder.Property(p => p.PaymentType)
+            .HasConversion<string>()
+            .IsRequired();
 
-      party.Property("InstitutionId")
-           .HasColumnName("CreditorInstitutionId")
-           .IsRequired();
-    });
+        builder.Property(p => p.Status)
+            .HasConversion<string>()
+            .IsRequired();
 
-    builder.HasMany(p => p.ValidationResults)
-           .WithOne()
-           .HasForeignKey(v => v.PaymentId);
+        builder.Property(p => p.InitiatedAt)
+            .IsRequired();
 
-    builder.Navigation(p => p.ValidationResults)
-           .HasField("_validationResults")
-           .UsePropertyAccessMode(PropertyAccessMode.Field);
+        // Debtor
+        builder.OwnsOne(p => p.Debtor, debtor =>
+        {
+            debtor.Property(d => d.Name)
+                .HasColumnName("DebtorName")
+                .HasMaxLength(200)
+                .IsRequired();
 
-    builder.HasMany(p => p.StatusEvents)
-          .WithOne()
-          .HasForeignKey(e => e.PaymentId);
+            debtor.Property(d => d.AccountNumber)
+                .HasColumnName("DebtorAccountNumber")
+                .HasMaxLength(50)
+                .IsRequired();
 
-    builder.Navigation(p => p.StatusEvents)
-          .HasField("_statusEvents")
-          .UsePropertyAccessMode(PropertyAccessMode.Field);
-  }
+            debtor.Property(d => d.InstitutionId)
+                .HasColumnName("DebtorInstitutionId")
+                .IsRequired();
+        });
+
+        builder.Navigation(p => p.Debtor)
+            .IsRequired();
+
+        // Creditor
+        builder.OwnsOne(p => p.Creditor, creditor =>
+        {
+            creditor.Property(c => c.Name)
+                .HasColumnName("CreditorName")
+                .HasMaxLength(200)
+                .IsRequired();
+
+            creditor.Property(c => c.AccountNumber)
+                .HasColumnName("CreditorAccountNumber")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            creditor.Property(c => c.InstitutionId)
+                .HasColumnName("CreditorInstitutionId")
+                .IsRequired();
+        });
+
+        builder.Navigation(p => p.Creditor)
+            .IsRequired();
+
+        // Money
+        builder.OwnsOne(p => p.Amount, money =>
+        {
+            money.Property(m => m.Amount)
+                .HasColumnName("Amount")
+                .IsRequired();
+
+            money.Property(m => m.Currency)
+                .HasColumnName("Currency")
+                .HasMaxLength(3)
+                .IsFixedLength()
+                .IsUnicode(false)
+                .IsRequired();
+        });
+
+        builder.Navigation(p => p.Amount)
+            .IsRequired();
+
+        // Participants
+        builder.HasMany(p => p.Participants)
+            .WithOne()
+            .HasForeignKey(p => p.PaymentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(p => p.Participants)
+            .HasField("_participants")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        // Validation results
+        builder.HasMany(p => p.ValidationResults)
+            .WithOne()
+            .HasForeignKey(v => v.PaymentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(p => p.ValidationResults)
+            .HasField("_validationResults")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        // Status events
+        builder.HasMany(p => p.StatusEvents)
+            .WithOne()
+            .HasForeignKey(s => s.PaymentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(p => p.StatusEvents)
+            .HasField("_statusEvents")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+    }
 }
