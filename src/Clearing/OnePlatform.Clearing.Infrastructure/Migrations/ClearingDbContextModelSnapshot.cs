@@ -116,7 +116,11 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasAlternateKey("Id", "InstitutionId");
+
                     b.HasIndex("InstitutionId");
+
+                    b.HasIndex("AccountId", "InstitutionId");
 
                     b.HasIndex("PaymentId", "InstitutionId")
                         .IsUnique();
@@ -238,6 +242,13 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                         .WithMany("Participants")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnePlatform.Clearing.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId", "InstitutionId")
+                        .HasPrincipalKey("Id", "InstitutionId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

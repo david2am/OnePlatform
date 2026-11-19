@@ -30,7 +30,9 @@ public enum ValidationCheckType
   Schema = 1,
   Sanctions = 2,
   Duplicate = 3,
-  Membership = 4
+  Membership = 4,
+  AccountExistence = 5,
+  AccountStatus = 6
 }
 
 public enum ValidationOutcome

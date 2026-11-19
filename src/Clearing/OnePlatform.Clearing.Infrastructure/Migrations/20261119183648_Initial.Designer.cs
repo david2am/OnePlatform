@@ -12,8 +12,8 @@ using OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
 namespace OnePlatform.Clearing.Infrastructure.Migrations
 {
     [DbContext(typeof(ClearingDbContext))]
-    [Migration("20261119145837_IncreaseParticipantRoleColumnLength")]
-    partial class IncreaseParticipantRoleColumnLength
+    [Migration("20261119183648_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,7 +119,11 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasAlternateKey("Id", "InstitutionId");
+
                     b.HasIndex("InstitutionId");
+
+                    b.HasIndex("AccountId", "InstitutionId");
 
                     b.HasIndex("PaymentId", "InstitutionId")
                         .IsUnique();
@@ -241,6 +245,13 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                         .WithMany("Participants")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnePlatform.Clearing.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId", "InstitutionId")
+                        .HasPrincipalKey("Id", "InstitutionId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

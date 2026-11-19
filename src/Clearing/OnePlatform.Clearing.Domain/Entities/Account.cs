@@ -15,7 +15,7 @@ public sealed class Account : AggregateRoot<AccountId>
     AccountId id,
     InstitutionId institutionId,
     string accountNumber,
-    string currency,
+    string currency, // TODO: create Currency VO
     DateTimeOffset openedAt
   ) : base(id)
   {

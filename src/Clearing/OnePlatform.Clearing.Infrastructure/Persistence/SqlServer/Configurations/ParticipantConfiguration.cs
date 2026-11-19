@@ -22,6 +22,14 @@ public sealed class ParticipantConfiguration
                .WithMany()
                .HasForeignKey(p => p.InstitutionId)
                .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne<Account>()
+               .WithMany()
+               .HasForeignKey(p => new { p.AccountId, p.InstitutionId })
+               .HasPrincipalKey(a => new { a.Id, a.InstitutionId })
+               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasAlternateKey(a => new { a.Id, a.InstitutionId });
 
         builder.Property(p => p.Role)
                .HasConversion<string>()

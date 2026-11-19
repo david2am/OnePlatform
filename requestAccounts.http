@@ -5,20 +5,21 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "InstitutionId": "01A1EEE1-D028-702B-9879-BBD8125977C2",
+  "InstitutionId": "01A1F519-A904-7FF0-8D03-361E26D8A9E3",
   "AccountNumber": "123456789",
   "Currency": "USD"
 }
 
 ### with same institution, differentt currency
+### same currency constrain
 POST {{baseUrl}}/api/accounts
 Accept: application/json
 Content-Type: application/json
 
 {
-  "InstitutionId": "01A1EEE1-D028-702B-9879-BBD8125977C2",
+  "InstitutionId": "01A1F519-B420-73EE-8EE8-43F905994BA4",
   "AccountNumber": "987654321",
-  "Currency": "COP"
+  "Currency": "USD"
 }
 
 ### inexistent intitution
