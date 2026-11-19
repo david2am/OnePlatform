@@ -25,7 +25,7 @@ public sealed class ParticipantConfiguration
 
         builder.Property(p => p.Role)
                .HasConversion<string>()
-               .HasMaxLength(10)
+               .HasMaxLength(50)
                .IsRequired();
 
         builder.HasIndex(p => new
