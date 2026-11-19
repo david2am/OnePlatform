@@ -11,6 +11,18 @@ Content-Type: application/json
   "MembershipSince": "2020-10-30T14:00:00Z"
 }
 
+###
+POST {{baseUrl}}/api/institutions
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Name": "CU B",
+  "RoutingNumber": "026009593",
+  "IsMember": true,
+  "MembershipSince": "2021-10-30T14:00:00Z"
+}
+
 ### invalid routing number
 POST {{baseUrl}}/api/institutions
 Accept: application/json
