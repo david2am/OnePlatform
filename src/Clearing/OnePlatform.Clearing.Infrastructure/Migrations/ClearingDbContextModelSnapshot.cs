@@ -153,6 +153,12 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     b.Property<Guid?>("ReturnOf")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)

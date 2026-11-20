@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using OnePlatform.Clearing.Application.Payments;
 using OnePlatform.Clearing.Domain.Entities;
+using OnePlatform.Clearing.Domain.Shared;
 using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
@@ -17,8 +18,16 @@ internal class PaymentRepository : IPaymentRepository
 
   public async Task AddAsync(Payment payment, CancellationToken ct)
   {
-    await _context.Payments.AddAsync(payment, ct);
-    await _context.SaveChangesAsync(ct);
+    try
+    {
+        await _context.Payments.AddAsync(payment, ct);
+        await _context.SaveChangesAsync(ct);
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        // TODO: improve later
+        // return Result.Failure(PaymentErrors.ConcurrencyConflict);
+    }
   }
 
   public async Task<Payment?> GetByE2EIdAsync(

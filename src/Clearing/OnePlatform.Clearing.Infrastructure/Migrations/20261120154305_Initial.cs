@@ -45,7 +45,8 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     CreditorInstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PaymentType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    InitiatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    InitiatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {

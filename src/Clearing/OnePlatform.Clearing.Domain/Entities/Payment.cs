@@ -31,6 +31,9 @@ public sealed class Payment : AggregateRoot<PaymentId>
   private readonly List<StatusEvent> _statusEvents = [];
   public IReadOnlyCollection<StatusEvent> StatusEvents => _statusEvents.AsReadOnly();
 
+  // protects against two processes changing the same payment at once
+  public byte[] RowVersion { get; private set; } = [];
+
   private Payment() : base(null!) {
     MessageId = null!;
     EndToEndId = null!;
@@ -377,4 +380,8 @@ public static class PaymentErrors
       "Payment.DuplicateParticipants",
       "An institution cannot participate more than once with the same role."
   );
+
+  public static readonly Error ConcurrencyConflict = new(
+    "Payment.ConcurrencyConflict",
+    "The payment was modified by another process. Reload it and try again.");
 }

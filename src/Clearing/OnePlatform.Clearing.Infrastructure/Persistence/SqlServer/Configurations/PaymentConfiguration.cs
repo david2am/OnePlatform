@@ -142,8 +142,7 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasIndex(p => new { p.MessageId, p.EndToEndId })
             .IsUnique();
 
-        // Optional: protects against two processes changing the same payment at once.
-        // Needs `public byte[] RowVersion { get; private set; } = [];` in Payment.
-        // builder.Property<byte[]>("RowVersion").IsRowVersion();
+        // protects against two processes changing the same payment at once.
+        builder.Property<byte[]>("RowVersion").IsRowVersion();
     }
 }
