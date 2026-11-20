@@ -15,23 +15,23 @@ Content-Type: application/json
   // Debtor
   "DebtorAccountNumber": "123321",
   "DebtorName": "Carlo",
-  "DebtorInstitutionId": "01A1F519-A904-7FF0-8D03-361E26D8A9E3",
+  "DebtorInstitutionId": "01A1F9A4-80A6-7172-927F-B841E91C7193",
 
   // Creditor
   "CreditorAccountNumber": "456654",
   "CreditorName": "Laura",
-  "CreditorInstitutionId": "01A1F519-B420-73EE-8EE8-43F905994BA4",
+  "CreditorInstitutionId": "01A1F9A4-8E7D-77D8-9A13-580CC6B90E0F",
 
   // Participants
   "Participants": [
     {
-      "InstitutionId": "01A1F519-A904-7FF0-8D03-361E26D8A9E3",
-      "AccountId": "01A1F51E-E35E-7A3B-B5D8-9C6AC71D3077",
+      "InstitutionId": "01A1F9A4-80A6-7172-927F-B841E91C7193",
+      "AccountId": "01A1F9A6-9AA0-7ADD-A131-AC6030F25B40",
       "Role": "DebtorAgent"
     },
     {
-      "InstitutionId": "01A1F519-B420-73EE-8EE8-43F905994BA4",
-      "AccountId": "01a1f520-376b-7ba2-9157-bad3eff08fdb",
+      "InstitutionId": "01A1F9A4-8E7D-77D8-9A13-580CC6B90E0F",
+      "AccountId": "01A1F9A6-A88C-729D-AA04-695847AABAB5",
       "Role": "CreditorAgent"
     }
   ],
@@ -55,23 +55,23 @@ Content-Type: application/json
   // Debtor
   "DebtorAccountNumber": "123321",
   "DebtorName": "Carlo",
-  "DebtorInstitutionId": "01A1F519-A904-7FF0-8D03-361E26D8A9E3",
+  "DebtorInstitutionId": "01A1F9A4-80A6-7172-927F-B841E91C7193",
 
   // Creditor
   "CreditorAccountNumber": "456654",
   "CreditorName": "Laura",
-  "CreditorInstitutionId": "01A1F519-B420-73EE-8EE8-43F905994BA4",
+  "CreditorInstitutionId": "01A1F9A4-8E7D-77D8-9A13-580CC6B90E0F",
 
   // Participants
   "Participants": [
     {
-      "InstitutionId": "01A1F519-A904-7FF0-8D03-361E26D8A9E3",
-      "AccountId": "01A1F51E-E35E-7A3B-B5D8-9C6AC71D3077",
+      "InstitutionId": "01A1F9A4-80A6-7172-927F-B841E91C7193",
+      "AccountId": "01A1F9A6-9AA0-7ADD-A131-AC6030F25B40",
       "Role": "DebtorAgent"
     },
     {
-      "InstitutionId": "01A1F519-B420-73EE-8EE8-43F905994BA4",
-      "AccountId": "01a1f520-376b-7ba2-9157-bad3eff08fdb",
+      "InstitutionId": "01A1F9A4-8E7D-77D8-9A13-580CC6B90E0F",
+      "AccountId": "01A1F9A6-A88C-729D-AA04-695847AABAB5",
       "Role": "CreditorAgent"
     }
   ],
@@ -80,10 +80,10 @@ Content-Type: application/json
 }
 
 ### first payment
-GET {{baseUrl}}/api/payments/321
+GET {{baseUrl}}/api/payments/01A1F9C4-FAFD-7C9F-86B0-B7A8594C65EE
 Accept: application/json
 ### second payment
-GET {{baseUrl}}/api/payments/456
+GET {{baseUrl}}/api/payments/01A1F9C1-363A-7A02-A9C0-84C0DFAF51D9
 Accept: application/json
 ### payment not found
 GET {{baseUrl}}/api/payments/789

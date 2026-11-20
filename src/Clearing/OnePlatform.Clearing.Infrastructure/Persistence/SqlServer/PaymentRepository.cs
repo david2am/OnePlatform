@@ -30,12 +30,13 @@ internal class PaymentRepository : IPaymentRepository
     }
   }
 
-  public async Task<Payment?> GetByE2EIdAsync(
-    EndToEndId e2eId,
+  public async Task<Payment?> GetByIdAsync(
+    PaymentId id,
     CancellationToken ct
   ) =>
     await _context.Payments
         .Include(p => p.ValidationResults)
         .Include(p => p.StatusEvents)
-        .FirstOrDefaultAsync(p => p.EndToEndId == e2eId, ct);
+        .FirstOrDefaultAsync(p => p.Id == id, ct);
+        // TODO: add this validation later: && p.InstitutionId == callerInstitutionId
 }

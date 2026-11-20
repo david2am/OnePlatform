@@ -84,7 +84,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
 
     if (endToEndId is null)
       return Result.Failure<Payment>(
-        PaymentErrors.EndToEndIdRequired);
+        PaymentErrors.IdRequired);
 
     if (amount is null)
       return Result.Failure<Payment>(PaymentErrors.AmountRequired);
@@ -322,9 +322,9 @@ public static class PaymentErrors
     "Payment.MessageIdRequired",
     "Message Id is required."
   );
-  public static readonly Error EndToEndIdRequired = new(
-    "Payment.EndToEndIdRequired",
-    "E2E Id is required."
+  public static readonly Error IdRequired = new(
+    "Payment.IdRequired",
+    "Id is required."
   );
   public static readonly Error AmountRequired = new(
     "Payment.AmountRequired",
