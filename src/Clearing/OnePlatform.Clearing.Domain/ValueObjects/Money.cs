@@ -4,26 +4,29 @@ namespace OnePlatform.Clearing.Domain.ValueObjects;
 
 public sealed record Money
 {
+  // minor units
   public long Amount { get; }
-  public string Currency { get; } = string.Empty;
+  public Currency Currency { get; }
 
-  private Money() { }
-  private Money(long amount, string currency)
+  private Money()
+  {
+    Currency = null!;
+  }
+  private Money(long amount, Currency currency)
   {
     Amount = amount;
     Currency = currency;
   }
 
-  public static Result<Money> Create(long amount, string currency)
+  public static Result<Money> Create(long amount, Currency currency)
   {
     if (amount <= 0)
       return Result.Failure<Money>(MoneyErrors.NotPositive);
 
-    var code = currency?.Trim().ToUpperInvariant();
-    if (string.IsNullOrWhiteSpace(currency) || code is not { Length: 3 } || !code.All(c => c is >= 'A' and <= 'Z'))
-      return Result.Failure<Money>(MoneyErrors.InvalidCurrency);
+    if (currency is null)
+      return Result.Failure<Money>(MoneyErrors.CurrencyRequired);
 
-    return Result.Success<Money>(new (amount, code));
+    return Result.Success<Money>(new (amount, currency));
   }
 }
 
@@ -33,9 +36,8 @@ public static class MoneyErrors
     "MoneyErrors.NotPositive",
     "Amount must be greater than zero."
   );
-
-  public static readonly Error InvalidCurrency = new(
-    "MoneyErrors.InvalidCurrency",
-    "Currency must be a 3-letter ISO code."
+  public static readonly Error CurrencyRequired = new(
+    "MoneyErrors.CurrencyRequired",
+    "Currency type is required."
   );
 }

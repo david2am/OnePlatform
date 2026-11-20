@@ -5,6 +5,7 @@ using OnePlatform.Clearing.Domain.ValueObjects;
 
 using MessageIdVo = OnePlatform.Clearing.Domain.ValueObjects.MessageId;
 using EndToEndIdVo = OnePlatform.Clearing.Domain.ValueObjects.EndToEndId;
+using CurrencyVo = OnePlatform.Clearing.Domain.ValueObjects.Currency;
 
 namespace OnePlatform.Api.Payments;
 
@@ -44,7 +45,12 @@ public sealed record ReceivePaymentRequest(
             return Result.Failure<ReceivePaymentCommand>(
                 e2eIdResult.Error);
 
-        var amountResult = Money.Create(Amount, Currency);
+        var currencyResult = CurrencyVo.Create(Currency);
+        if (currencyResult.IsFailure)
+            return Result.Failure<ReceivePaymentCommand>(
+                currencyResult.Error);
+
+        var amountResult = Money.Create(Amount, currencyResult.Value);
 
         if (amountResult.IsFailure)
             return Result.Failure<ReceivePaymentCommand>(

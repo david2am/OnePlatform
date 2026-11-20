@@ -4,7 +4,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnePlatform.Clearing.Domain.Shared;
 
-namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
+namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Converters;
 
 public sealed class GuidIdConverter<TId> : ValueConverter<TId, Guid>
     where TId : IGuidId<TId>

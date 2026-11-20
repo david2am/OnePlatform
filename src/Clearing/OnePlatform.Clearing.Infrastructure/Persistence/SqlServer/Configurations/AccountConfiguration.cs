@@ -1,12 +1,11 @@
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Domain.Entities;
+using OnePlatform.Clearing.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Configurations;
 
-public sealed class AccountConfiguration
-    : IEntityTypeConfiguration<Account>
+public sealed class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
     public void Configure(EntityTypeBuilder<Account> builder)
     {
@@ -14,7 +13,10 @@ public sealed class AccountConfiguration
 
         builder.HasKey(a => a.Id);
 
-        // foreign key relationship
+        builder.Property(a => a.Id)
+               .ValueGeneratedNever();
+
+        // Foreign key to Institution
         builder.HasOne<Institution>()
                .WithMany()
                .HasForeignKey(a => a.InstitutionId)
@@ -22,13 +24,11 @@ public sealed class AccountConfiguration
 
         // Plain columns
         builder.Property(a => a.AccountNumber)
-               .HasMaxLength(34)
+               .HasMaxLength(17)
                .IsUnicode(false)
                .IsRequired();
 
         builder.Property(a => a.Currency)
-               .HasColumnType("char(3)")
-               .IsUnicode(false)
                .IsRequired();
 
         builder.Property(a => a.Status)
@@ -39,18 +39,18 @@ public sealed class AccountConfiguration
         builder.Property(a => a.OpenedAt)
                .IsRequired();
 
-        builder.HasIndex(a => new
-               {
-                   a.InstitutionId,
-                   a.AccountNumber
-               })
+        // Rule 1: an account number is unique inside one institution
+        builder.HasIndex(a => new { a.InstitutionId, a.AccountNumber })
                .IsUnique();
 
-        builder.HasIndex(a => new
-               {
-                   a.InstitutionId,
-                   a.Currency
-               })
+        // Rule 2: one account per currency per institution
+        builder.HasIndex(a => new { a.InstitutionId, a.Currency })
                .IsUnique();
+
+        // should NOT block opening a new one in the same currency:
+        //
+        // builder.HasIndex(a => new { a.InstitutionId, a.Currency })
+        //        .IsUnique()
+        //        .HasFilter("[Status] <> 'Closed'");
     }
 }

@@ -9,7 +9,7 @@ public sealed record GetPaymentByE2EIdQuery(string E2EId) : IQuery<PaymentRespon
 public sealed record PaymentResponse(
   EndToEndId EndToEndId,
   decimal Amount,
-  string Currency,
+  Currency Currency,
   PaymentStatus Status,
   DateTimeOffset InitiatedAt
 );

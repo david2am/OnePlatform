@@ -7,5 +7,5 @@ namespace OnePlatform.Clearing.Application.Accounts.Commands;
 public sealed record OpenAccountCommand(
   InstitutionId InstitutionId,
   string AccountNumber,
-  string Currency
+  Currency Currency
 ) : ICommand<Account>;

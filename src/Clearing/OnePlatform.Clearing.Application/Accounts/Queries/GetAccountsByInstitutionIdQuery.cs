@@ -12,7 +12,7 @@ public sealed record AccountResponse(
   AccountId Id,
   InstitutionId InstitutionId,
   string AccountNumber,
-  string Currency,
+  Currency Currency,
   AccountStatus Status,
   DateTimeOffset OpenedAt
 );

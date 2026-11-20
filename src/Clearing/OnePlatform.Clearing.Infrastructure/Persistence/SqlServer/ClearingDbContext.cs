@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnePlatform.Clearing.Domain.Entities;
 using OnePlatform.Clearing.Domain.ValueObjects;
+using OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Converters;
 
 namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
 
@@ -39,5 +40,9 @@ public class ClearingDbContext : DbContext
     
     configurationBuilder.Properties<ParticipantId>()
       .HaveConversion<GuidIdConverter<ParticipantId>>();
+
+    configurationBuilder.Properties<Currency>()
+      .HaveConversion<CurrencyConverter>()
+      .HaveColumnType("char(3)");
   }
 }

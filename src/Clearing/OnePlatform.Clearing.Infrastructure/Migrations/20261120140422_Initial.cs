@@ -36,15 +36,15 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     EndToEndId = table.Column<string>(type: "nvarchar(35)", maxLength: 35, nullable: false),
                     ReturnOf = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
-                    Currency = table.Column<string>(type: "char(3)", unicode: false, fixedLength: true, maxLength: 3, nullable: false),
+                    Currency = table.Column<string>(type: "char(3)", nullable: false),
                     DebtorAccountNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     DebtorName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     DebtorInstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreditorAccountNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreditorName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CreditorInstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     InitiatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
@@ -64,8 +64,8 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     InstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AccountNumber = table.Column<string>(type: "varchar(34)", unicode: false, maxLength: 34, nullable: false),
-                    Currency = table.Column<string>(type: "char(3)", unicode: false, nullable: false),
+                    AccountNumber = table.Column<string>(type: "varchar(17)", unicode: false, maxLength: 17, nullable: false),
+                    Currency = table.Column<string>(type: "char(3)", nullable: false),
                     OpenedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
                 },
@@ -190,6 +190,12 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 name: "IX_Participants_PaymentId_InstitutionId",
                 table: "Participants",
                 columns: new[] { "PaymentId", "InstitutionId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_MessageId_EndToEndId",
+                table: "Payments",
+                columns: new[] { "MessageId", "EndToEndId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

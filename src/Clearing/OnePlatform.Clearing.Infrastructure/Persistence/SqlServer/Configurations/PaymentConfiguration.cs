@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Domain.Entities;
@@ -15,7 +14,7 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Id)
-            .ValueGeneratedNever();
+               .ValueGeneratedNever();
 
         // ISO 20022 identifiers
         builder.Property(p => p.MessageId)
@@ -32,7 +31,7 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .HasMaxLength(35)
             .IsRequired();
 
-        // Return relationship
+        // Return relationship (a return points to the original payment)
         builder.HasOne<Payment>()
             .WithMany()
             .HasForeignKey(p => p.ReturnOf)
@@ -41,10 +40,12 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         // Payment properties
         builder.Property(p => p.PaymentType)
             .HasConversion<string>()
+            .HasMaxLength(20)
             .IsRequired();
 
         builder.Property(p => p.Status)
             .HasConversion<string>()
+            .HasMaxLength(20)
             .IsRequired();
 
         builder.Property(p => p.InitiatedAt)
@@ -101,9 +102,6 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 
             money.Property(m => m.Currency)
                 .HasColumnName("Currency")
-                .HasMaxLength(3)
-                .IsFixedLength()
-                .IsUnicode(false)
                 .IsRequired();
         });
 
@@ -139,5 +137,13 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Navigation(p => p.StatusEvents)
             .HasField("_statusEvents")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        // Rule 1. A payment is identified inside a message by its EndToEndId,
+        builder.HasIndex(p => new { p.MessageId, p.EndToEndId })
+            .IsUnique();
+
+        // Optional: protects against two processes changing the same payment at once.
+        // Needs `public byte[] RowVersion { get; private set; } = [];` in Payment.
+        // builder.Property<byte[]>("RowVersion").IsRowVersion();
     }
 }

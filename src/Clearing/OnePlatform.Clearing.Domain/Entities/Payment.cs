@@ -75,6 +75,14 @@ public sealed class Payment : AggregateRoot<PaymentId>
     DateTimeOffset receivedAt
   )
   {
+    if (messageId is null)
+      return Result.Failure<Payment>(
+        PaymentErrors.MessageIdRequired);
+
+    if (endToEndId is null)
+      return Result.Failure<Payment>(
+        PaymentErrors.EndToEndIdRequired);
+
     if (amount is null)
       return Result.Failure<Payment>(PaymentErrors.AmountRequired);
 
@@ -89,14 +97,14 @@ public sealed class Payment : AggregateRoot<PaymentId>
     if (participantsValidation.IsFailure)
         return Result.Failure<Payment>(participantsValidation.Error);
     
-    var PaymentIdValue = PaymentId.New();
+    var paymentId = PaymentId.New();
 
     var paymentParticipants = new List<Participant>();
 
     foreach (var participantInput in participants)
     {
         var participantResult = Participant.Add(
-            PaymentIdValue,
+            paymentId,
             participantInput.InstitutionId,
             participantInput.AccountId,
             participantInput.Role
@@ -109,7 +117,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
     }
 
     var payment = new Payment(
-      PaymentIdValue,
+      paymentId,
       messageId,
       endToEndId,
       amount,
@@ -121,7 +129,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
 
     payment._statusEvents.Add(
       StatusEvent.Create(
-        PaymentIdValue,
+        paymentId,
         PaymentEventType.Received,
         receivedAt,
         null)
@@ -138,33 +146,38 @@ public sealed class Payment : AggregateRoot<PaymentId>
     return Result.Success(payment);
   }
 
-  private static Result ValidateParticipants(
+  private static Result<IReadOnlyCollection<ParticipantInput>>
+  ValidateParticipants(
     IReadOnlyCollection<ParticipantInput> participants
   )
   {
     if (participants is null || participants.Count == 0)
-        return Result.Failure(PaymentErrors.ParticipantsRequired);
+        return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
+          PaymentErrors.ParticipantsRequired);
 
     var debtorAgents = participants
         .Where(p => p.Role == ParticipantRole.DebtorAgent)
         .ToList();
 
     if (debtorAgents.Count != 1)
-        return Result.Failure(PaymentErrors.InvalidDebtorAgentCount);
+        return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
+          PaymentErrors.InvalidDebtorAgentCount);
 
     var creditorAgents = participants
         .Where(p => p.Role == ParticipantRole.CreditorAgent)
         .ToList();
 
     if (creditorAgents.Count != 1)
-        return Result.Failure(PaymentErrors.InvalidCreditorAgentCount);
+        return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
+          PaymentErrors.InvalidCreditorAgentCount);
 
     var duplicates = participants
         .GroupBy(p => new { p.InstitutionId, p.Role })
         .Any(g => g.Count() > 1);
 
     if (duplicates)
-        return Result.Failure(PaymentErrors.DuplicateParticipants);
+        return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
+          PaymentErrors.DuplicateParticipants);
 
     return Result.Success(participants);
   }
@@ -302,6 +315,14 @@ public static class PaymentErrors
     "Validation outcome is not valid."
   );
   
+  public static readonly Error MessageIdRequired = new(
+    "Payment.MessageIdRequired",
+    "Message Id is required."
+  );
+  public static readonly Error EndToEndIdRequired = new(
+    "Payment.EndToEndIdRequired",
+    "E2E Id is required."
+  );
   public static readonly Error AmountRequired = new(
     "Payment.AmountRequired",
     "Amount is required."
@@ -314,7 +335,7 @@ public static class PaymentErrors
 
   public static readonly Error NotPending = new(
     "Payment.NotPending",
-    "Only a pending payment can be validated."
+    "The payment is not pending."
   );
 
   public static readonly Error CheckAlreadyRecorded = new(

@@ -29,13 +29,12 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.Property<string>("AccountNumber")
                         .IsRequired()
-                        .HasMaxLength(34)
+                        .HasMaxLength(17)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(34)");
+                        .HasColumnType("varchar(17)");
 
                     b.Property<string>("Currency")
                         .IsRequired()
-                        .IsUnicode(false)
                         .HasColumnType("char(3)");
 
                     b.Property<Guid>("InstitutionId")
@@ -148,18 +147,23 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.Property<string>("PaymentType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<Guid?>("ReturnOf")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ReturnOf");
+
+                    b.HasIndex("MessageId", "EndToEndId")
+                        .IsUnique();
 
                     b.ToTable("Payments", (string)null);
                 });
@@ -328,11 +332,8 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
-                                .HasMaxLength(3)
-                                .IsUnicode(false)
                                 .HasColumnType("char(3)")
-                                .HasColumnName("Currency")
-                                .IsFixedLength();
+                                .HasColumnName("Currency");
 
                             b1.HasKey("PaymentId");
 

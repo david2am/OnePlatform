@@ -6,16 +6,23 @@ namespace OnePlatform.Clearing.Domain.Entities;
 
 public sealed class Account : AggregateRoot<AccountId>
 {
+  public InstitutionId InstitutionId { get; private set; }
+  public string AccountNumber { get; private set; } = string.Empty;
+  public Currency Currency { get; private set; }
+  public DateTimeOffset OpenedAt { get; private set; }
+  public AccountStatus Status { get; private set; }
+
   private Account() : base(null!)
   {
     InstitutionId = null!;
+    Currency = null!;
   }
 
   private Account(
     AccountId id,
     InstitutionId institutionId,
     string accountNumber,
-    string currency, // TODO: create Currency VO
+    Currency currency,
     DateTimeOffset openedAt
   ) : base(id)
   {
@@ -26,32 +33,27 @@ public sealed class Account : AggregateRoot<AccountId>
     Status = AccountStatus.Active;
   }
 
-  public InstitutionId InstitutionId { get; private set; }
-  public string AccountNumber { get; private set; } = string.Empty;
-  public string Currency { get; private set; } = string.Empty;
-  public DateTimeOffset OpenedAt { get; private set; }
-  public AccountStatus Status { get; private set; }
-
   public static Result<Account> Open(
     InstitutionId institutionId,
     string accountNumber,
-    string currency,
+    Currency currency,
     DateTimeOffset openedAt)
   {
+    if (institutionId is null)
+      return Result.Failure<Account>(AccountErrors.InstitutionRequired);
+
     if (!IsValidAccountNumber(accountNumber))
       return Result.Failure<Account>(AccountErrors.InvalidAccountNumber);
-
-    var normalizedCurency = currency?.Trim().ToUpperInvariant() ?? string.Empty;
-
-    if (!IsValidCurrency(normalizedCurency))
-      return Result.Failure<Account>(AccountErrors.InvalidCurrency);
+    
+    if (currency is null)
+      return Result.Failure<Account>(AccountErrors.CurrencyRequired);
 
     return Result.Success(
       new Account(
         AccountId.New(),
         institutionId,
         accountNumber,
-        normalizedCurency,
+        currency,
         openedAt
       )
     );
@@ -99,9 +101,6 @@ public sealed class Account : AggregateRoot<AccountId>
   => !string.IsNullOrEmpty(value)
       && value.Length <= 17
       && value.All(char.IsAsciiDigit);
-
-  private static bool IsValidCurrency(string value)
-    => value.Length == 3 && value.All(char.IsAsciiLetterUpper);
 }
 
 public static class AccountErrors
@@ -112,10 +111,10 @@ public static class AccountErrors
   public static readonly Error InvalidAccountNumber = new(
     "Account.InvalidAccountNumber",
     "Account number must contain 1 to 17 digits.");
-
-  public static readonly Error InvalidCurrency = new(
-    "Account.InvalidCurrency",
-    "Currency must be a 3-letter ISO code, for example USD.");
+  
+  public static readonly Error CurrencyRequired = new(
+    "Account.CurrencyRequired",
+    "A currency should be provided.");
 
   public static readonly Error AccountClosed = new(
     "Account.AccountClosed", "The account is closed.");
