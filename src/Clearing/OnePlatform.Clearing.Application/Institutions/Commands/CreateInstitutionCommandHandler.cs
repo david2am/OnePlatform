@@ -23,11 +23,15 @@ internal sealed class CreateInstitutionCommandHandler : ICommandHandler<CreateIn
     CancellationToken ct
   )
   {
+    DateTimeOffset? membershipSince = command.IsMember
+      ? command.MembershipSince ?? _timeProvider.GetUtcNow()
+      : null;
+
     var result = Institution.Create(
       command.Name,
       command.RoutingNumber,
       command.IsMember,
-      command.MembershipSince
+      membershipSince
     );
 
     if (result.IsFailure)
