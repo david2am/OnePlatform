@@ -37,6 +37,7 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                     ReturnOf = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
                     Currency = table.Column<string>(type: "char(3)", nullable: false),
+                    SenderInstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DebtorAccountNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     DebtorName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     DebtorInstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -194,15 +195,21 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_MessageId_EndToEndId",
+                name: "IX_Payments_EndToEndId",
                 table: "Payments",
-                columns: new[] { "MessageId", "EndToEndId" },
-                unique: true);
+                column: "EndToEndId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_ReturnOf",
                 table: "Payments",
                 column: "ReturnOf");
+
+            migrationBuilder.CreateIndex(
+                name: "UX_Payments_Sender_Message_EndToEnd",
+                table: "Payments",
+                columns: new[] { "SenderInstitutionId", "MessageId", "EndToEndId" },
+                unique: true,
+                filter: "[EndToEndId] <> 'NOTPROVIDED'");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StatusEvents_PaymentId_OccurredAt",

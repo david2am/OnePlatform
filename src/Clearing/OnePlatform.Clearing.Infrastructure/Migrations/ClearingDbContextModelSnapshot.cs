@@ -159,6 +159,9 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
+                    b.Property<Guid>("SenderInstitutionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -166,10 +169,15 @@ namespace OnePlatform.Clearing.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EndToEndId")
+                        .HasDatabaseName("IX_Payments_EndToEndId");
+
                     b.HasIndex("ReturnOf");
 
-                    b.HasIndex("MessageId", "EndToEndId")
-                        .IsUnique();
+                    b.HasIndex("SenderInstitutionId", "MessageId", "EndToEndId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Payments_Sender_Message_EndToEnd")
+                        .HasFilter("[EndToEndId] <> 'NOTPROVIDED'");
 
                     b.ToTable("Payments", (string)null);
                 });

@@ -17,6 +17,13 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
                .ValueGeneratedNever();
 
         // ISO 20022 identifiers
+
+        // Sender: the institution that sent the message that brought this payment in.
+        // A MessageId is only unique per sender, so we need it for the uniqueness rule below.
+        // (InstitutionId already has a converter in ClearingDbContext.ConfigureConventions)
+        builder.Property(p => p.SenderInstitutionId)
+            .IsRequired();
+
         builder.Property(p => p.MessageId)
             .HasConversion(
                 id => id.Value,
@@ -138,9 +145,34 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .HasField("_statusEvents")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        // Rule 1. A payment is identified inside a message by its EndToEndId,
-        builder.HasIndex(p => new { p.MessageId, p.EndToEndId })
-            .IsUnique();
+        // ------------------------------------------------------------------
+        // Uniqueness rules
+        // ------------------------------------------------------------------
+
+        // Rule 1. Inside one message, a sender cannot reuse the same EndToEndId.
+        //  - The sender is part of the key because a MessageId is only unique per sender.
+        //  - NOTPROVIDED is excluded: many payments can legitimately carry it.
+        //    (Duplicates with NOTPROVIDED must be detected some other way.)
+        //  - Domain code should check for the duplicate BEFORE inserting;
+        //    this index is the last safety net for two requests arriving at the same time.
+        builder.HasIndex(p => new { p.SenderInstitutionId, p.MessageId, p.EndToEndId })
+            .IsUnique()
+            .HasFilter("[EndToEndId] <> 'NOTPROVIDED'")
+            .HasDatabaseName("UX_Payments_Sender_Message_EndToEnd");
+
+        // Lookup only (NOT unique): find payments by their EndToEndId,
+        // for example when a return or a status report refers to the original payment.
+        builder.HasIndex(p => p.EndToEndId)
+            .HasDatabaseName("IX_Payments_EndToEndId");
+
+        // Rule 2 (OPTIONAL, business decision): an original payment can be returned only once.
+        // Enable it only if partial returns are NOT allowed in OnePlatform.
+        // The filter is needed because SQL Server treats NULLs as equal in a unique index.
+        //
+        // builder.HasIndex(p => p.ReturnOf)
+        //     .IsUnique()
+        //     .HasFilter("[ReturnOf] IS NOT NULL")
+        //     .HasDatabaseName("UX_Payments_ReturnOf");
 
         // protects against two processes changing the same payment at once.
         builder.Property<byte[]>("RowVersion").IsRowVersion();
