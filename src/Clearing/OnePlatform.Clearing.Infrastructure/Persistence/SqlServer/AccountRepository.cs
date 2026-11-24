@@ -21,6 +21,13 @@ internal class AccountRepository : IAccountRepository
     await _context.SaveChangesAsync(ct);
   }
 
+  public async Task<Account?> GetByIdAsync(
+    AccountId id,
+    CancellationToken ct
+  ) => await _context.Accounts
+        .AsNoTracking()
+        .FirstOrDefaultAsync(a => a.Id == id, ct);
+
   public async Task<IReadOnlyList<Account>> GetByInstitutionIdAsync(
     InstitutionId institutionId,
     CancellationToken ct

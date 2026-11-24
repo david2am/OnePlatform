@@ -27,9 +27,24 @@ public sealed class AccountController(ISender sender) : ControllerBase
       : BadRequest();
   }
 
-  [HttpGet("{institutionId:guid}")]
+  [HttpGet("id:guid")]
+  public async Task<IActionResult> GetById(
+    Guid id,
+    CancellationToken ct
+  )
+  {
+    var query = new GetAccountsByInstitutionIdQuery(id);
+
+    var response = await sender.Send(query, ct);
+
+    return response.IsSuccess
+      ? Ok(response.Value)
+      : NotFound(response.Error);
+  }
+
+  [HttpGet]
   public async Task<IActionResult> GetByInstitutionId(
-    Guid institutionId,
+    [FromQuery] Guid institutionId,
     CancellationToken ct
   )
   {
