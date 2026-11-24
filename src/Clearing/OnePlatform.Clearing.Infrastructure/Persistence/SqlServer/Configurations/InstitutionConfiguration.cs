@@ -32,7 +32,7 @@ public sealed class InstitutionConfiguration
                .IsUnicode(false)
                .IsRequired();
 
-        builder.HasIndex(i => i.RoutingNumber)
+        builder.HasIndex(i => i.RoutingNumber) // unique per Clearing System
                .IsUnique();
 
         builder.Property(i => i.IsMember)

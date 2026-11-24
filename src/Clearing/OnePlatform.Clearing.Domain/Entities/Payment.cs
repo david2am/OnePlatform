@@ -8,13 +8,25 @@ namespace OnePlatform.Clearing.Domain.Entities;
 public sealed class Payment : AggregateRoot<PaymentId>
 {
 
-    // ISO 20022 message identifiers.
+  // ISO 20022 message identifiers.
+  // MssgId: like an envelope with several letters.
+  //  Identifies a msg that could carry several payments,
+  //  it's assigned by the sender of the message (the institution)
   public MessageId MessageId { get; private set; }
+  // E2EId: it's the payment's tracking number.
+  //  identifies a payment, it's created by the debtor
+  //  from it's Institution system
+  //  unchanged accross the payment chain
   public EndToEndId EndToEndId { get; private set; }
   // returf_of another PaymentId
   public PaymentId? ReturnOf { get; private set; }
 
   public Money Amount { get; private set; }
+
+  // not always the debtor InstitutionId is the SenderInstitutionId,
+  // for example when a return happen from creditor's side.
+  // A MessageId is only unique per sender, and this is how we verify it
+  public InstitutionId SenderInstitutionId { get; private set; }
   public PaymentParty Debtor { get; private set; }
   public PaymentParty Creditor { get; private set; }
 
