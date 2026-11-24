@@ -52,6 +52,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
     Amount = null!;
     Debtor = null!;
     Creditor = null!;
+    SenderInstitutionId = null!;
     Status = PaymentStatus.Pending;
   }
 
@@ -60,6 +61,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
     MessageId messageId,
     EndToEndId endToEndId,
     Money amount,
+    InstitutionId senderInstitutionId,
     PaymentParty debtor,
     PaymentParty creditor,
     IReadOnlyCollection<Participant> participants,
@@ -69,6 +71,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
     MessageId = messageId;
     EndToEndId = endToEndId;
     Amount = amount;
+    SenderInstitutionId = senderInstitutionId;
     Debtor = debtor;
     Creditor = creditor;
 
@@ -83,6 +86,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
     MessageId messageId,
     EndToEndId endToEndId,
     Money amount,
+    InstitutionId senderInstitutionId,
     PaymentParty debtor,
     PaymentParty creditor,
     IReadOnlyCollection<ParticipantInput> participants,
@@ -100,6 +104,9 @@ public sealed class Payment : AggregateRoot<PaymentId>
 
     if (amount is null)
       return Result.Failure<Payment>(PaymentErrors.AmountRequired);
+    
+    if (senderInstitutionId is null)
+      return Result.Failure<Payment>(PaymentErrors.SenderInstitutionId);
 
     if (debtor is null || creditor is null)
       return Result.Failure<Payment>(PaymentErrors.PartyRequired);
@@ -136,6 +143,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
       messageId,
       endToEndId,
       amount,
+      senderInstitutionId,
       debtor,
       creditor,
       paymentParticipants,
@@ -343,6 +351,11 @@ public static class PaymentErrors
     "Amount is required."
   );
   
+  public static readonly Error SenderInstitutionId = new(
+    "Payment.SenderInstitutionId",
+    "Sender Institution is required."
+  );
+
   public static readonly Error PartyRequired = new(
     "Payment.PartyRequired",
     "Party is required."

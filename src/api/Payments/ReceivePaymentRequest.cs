@@ -15,6 +15,8 @@ public sealed record ReceivePaymentRequest(
     long Amount,
     string Currency,
 
+    Guid SenderInstitutionId,
+
     // Debtor
     string DebtorAccountNumber,
     string DebtorName,
@@ -55,6 +57,13 @@ public sealed record ReceivePaymentRequest(
         if (amountResult.IsFailure)
             return Result.Failure<ReceivePaymentCommand>(
                 amountResult.Error);
+
+        var senderInstitutionIdResult = InstitutionId.Create(SenderInstitutionId);
+
+        if (senderInstitutionIdResult.IsFailure)
+            return Result.Failure<ReceivePaymentCommand>(
+                senderInstitutionIdResult.Error
+            );
 
         var debtorResult = PaymentParty.Create(
             DebtorAccountNumber,
@@ -113,6 +122,7 @@ public sealed record ReceivePaymentRequest(
             msgIdResult.Value,
             e2eIdResult.Value,
             amountResult.Value,
+            senderInstitutionIdResult.Value,
             debtorResult.Value,
             creditorResult.Value,
             participantInputs,

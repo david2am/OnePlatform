@@ -29,6 +29,7 @@ public sealed class ReceivePaymentHandler : ICommandHandler<ReceivePaymentComman
       command.MessageId,
       command.EndToEndId,
       command.Amount,
+      command.SenderInstitutionId,
       command.Debtor,
       command.Creditor,
       command.Participants,

@@ -8,6 +8,7 @@ public sealed record ReceivePaymentCommand(
   MessageId MessageId,
   EndToEndId EndToEndId,
   Money Amount,
+  InstitutionId SenderInstitutionId,
   PaymentParty Debtor,
   PaymentParty Creditor,
   IReadOnlyCollection<ParticipantInput> Participants,
