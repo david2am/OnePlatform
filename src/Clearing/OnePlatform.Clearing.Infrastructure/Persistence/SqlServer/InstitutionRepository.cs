@@ -23,6 +23,13 @@ public sealed class InstitutionRepository : IInstitutionRepository
     await _context.SaveChangesAsync();
   }
 
+  public async Task<Institution?> GetByIdAsync(
+    InstitutionId id,
+    CancellationToken ct
+  ) =>
+    await _context.Institutions
+        .FirstOrDefaultAsync(i => i.Id == id);
+
   public async Task<Institution?> GetByRoutingNumberAsync(
     RoutingNumber routingNumber,
     CancellationToken ct

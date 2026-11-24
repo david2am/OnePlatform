@@ -10,6 +10,11 @@ public interface IInstitutionRepository
     CancellationToken ct = default
   );
 
+  Task<Institution?> GetByIdAsync(
+    InstitutionId id,
+    CancellationToken ct = default
+  );
+
   Task<Institution?> GetByRoutingNumberAsync(
     RoutingNumber routingNumber,
     CancellationToken ct = default

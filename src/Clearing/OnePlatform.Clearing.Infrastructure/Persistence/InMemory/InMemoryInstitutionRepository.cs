@@ -16,6 +16,12 @@ internal class InMemoryInstitutionRepository
     return Task.CompletedTask;
   }
 
+  public Task<Institution?> GetByIdAsync(
+    InstitutionId id,
+    CancellationToken cancellationToken
+  ) =>
+    Task.FromResult(Find(i => i.Id == id));
+
   public Task<Institution?> GetByRoutingNumberAsync(
     RoutingNumber routingNumber,
     CancellationToken cancellationToken
