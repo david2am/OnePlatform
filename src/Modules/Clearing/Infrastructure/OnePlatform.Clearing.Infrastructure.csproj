@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\OnePlatform.Clearing.Domain\OnePlatform.Clearing.Domain.csproj" />
-    <ProjectReference Include="..\OnePlatform.Clearing.Application\OnePlatform.Clearing.Application.csproj" />
+    <ProjectReference Include="..\Domain\OnePlatform.Clearing.Domain.csproj" />
+    <ProjectReference Include="..\Application\OnePlatform.Clearing.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

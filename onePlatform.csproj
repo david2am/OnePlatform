@@ -17,12 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="src\Clearing\OnePlatform.Clearing.Application\OnePlatform.Clearing.Application.csproj" />
-    <ProjectReference Include="src\Clearing\OnePlatform.Clearing.Infrastructure\OnePlatform.Clearing.Infrastructure.csproj" />
+    <ProjectReference Include="src\Modules\Clearing\Application\OnePlatform.Clearing.Application.csproj" />
+    <ProjectReference Include="src\Modules\Clearing\Infrastructure\OnePlatform.Clearing.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="src\Clearing\**\*.cs" />
+    <Compile Remove="src\Modules\Clearing\**\*.cs" />
   </ItemGroup>
 
 </Project>

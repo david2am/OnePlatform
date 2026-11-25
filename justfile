@@ -1,6 +1,6 @@
 # Variables (like constants you reuse)
 api   := "onePlatform.csproj"
-infra := "src/Clearing/OnePlatform.Clearing.Infrastructure"
+infra := "src/Modules/Clearing/Infrastructure"
 
 # Show all available commands when you just type `just`
 default:
