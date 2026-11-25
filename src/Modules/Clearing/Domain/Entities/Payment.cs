@@ -113,6 +113,9 @@ public sealed class Payment : AggregateRoot<PaymentId>
 
     if (debtor.InstitutionId == creditor.InstitutionId && debtor.AccountNumber == creditor.AccountNumber)
       return Result.Failure<Payment>(PaymentErrors.SameAccount);
+    
+    if (debtor.InstitutionId == creditor.InstitutionId)
+      return Result.Failure<Payment>(PaymentErrors.SameInstitution);
 
     var participantsValidation = ValidateParticipants(participants);
 
@@ -201,6 +204,14 @@ public sealed class Payment : AggregateRoot<PaymentId>
     if (duplicates)
         return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
           PaymentErrors.DuplicateParticipants);
+
+    var duplicateAccounts = participants
+        .GroupBy(p => new { p.AccountId })
+        .Any(g => g.Count() > 1);
+
+    if (duplicateAccounts)
+        return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
+            PaymentErrors.DuplicateParticipantAccounts);
 
     return Result.Success(participants);
   }
@@ -385,6 +396,11 @@ public static class PaymentErrors
     "Payment.SameAccount",
     "Debtor and creditor cannot be the same account."
   );
+  
+  public static readonly Error SameInstitution = new(
+    "Payment.SameInstitution",
+    "Debtor and creditor cannot belong to the same institution."
+  );
 
   public static readonly Error ParticipantsRequired = new(
     "Payment.ParticipantsRequired",
@@ -404,6 +420,11 @@ public static class PaymentErrors
   public static readonly Error DuplicateParticipants = new(
       "Payment.DuplicateParticipants",
       "An institution cannot participate more than once with the same role."
+  );
+  
+  public static readonly Error DuplicateParticipantAccounts = new(
+      "Payment.DuplicateParticipantAccounts",
+      "Participants cannot have the same account."
   );
 
   public static readonly Error ConcurrencyConflict = new(
