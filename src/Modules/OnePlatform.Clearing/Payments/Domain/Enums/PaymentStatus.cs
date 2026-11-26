@@ -1,4 +1,4 @@
-namespace OnePlatform.Clearing.Domain.Enums;
+namespace OnePlatform.Clearing.Payments.Domain.Enums;
 
 public enum PaymentStatus
 {

@@ -1,7 +1,8 @@
-using OnePlatform.Clearing.Domain.Enums;
-using OnePlatform.Clearing.Domain.ValueObjects;
+using OnePlatform.Clearing.Payments.Domain.Enums;
+using OnePlatform.Clearing.Payments.Domain.ValueObjects;
+using OnePlatform.Clearing.Shared.Domain.Entities;
 
-namespace OnePlatform.Clearing.Domain.Entities;
+namespace OnePlatform.Clearing.Payments.Domain.Entities;
 
 public sealed class StatusEvent : Entity<Guid>
 {
