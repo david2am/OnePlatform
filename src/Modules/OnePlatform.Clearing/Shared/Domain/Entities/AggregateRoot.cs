@@ -1,5 +1,6 @@
-using OnePlatform.Clearing.Domain.DomainEvents;
-namespace OnePlatform.Clearing.Domain.Entities;
+using OnePlatform.Clearing.Shared.Domain.DomainEvents;
+
+namespace OnePlatform.Clearing.Shared.Domain.Entities;
 
 public abstract class AggregateRoot<TId> : Entity<TId> where TId : notnull
 {

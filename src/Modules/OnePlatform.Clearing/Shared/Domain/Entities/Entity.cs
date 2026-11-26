@@ -1,4 +1,4 @@
-namespace OnePlatform.Clearing.Domain.Entities;
+namespace OnePlatform.Clearing.Shared.Domain.Entities;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
 {

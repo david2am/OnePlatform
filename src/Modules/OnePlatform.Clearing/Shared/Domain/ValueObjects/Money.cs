@@ -1,6 +1,6 @@
-using OnePlatform.Clearing.Domain.Shared;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
-namespace OnePlatform.Clearing.Domain.ValueObjects;
+namespace OnePlatform.Clearing.Shared.Domain.ValueObjects;
 
 public sealed record Money
 {

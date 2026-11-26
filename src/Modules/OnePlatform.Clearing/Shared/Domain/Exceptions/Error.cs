@@ -1,4 +1,4 @@
-namespace OnePlatform.Clearing.Domain.Shared;
+namespace OnePlatform.Clearing.Shared.Domain.Exceptions;
 
 public enum ErrorType { Failure, Validation, NotFound, Conflict }
 public sealed record Error(string Code, string Message, ErrorType Type = ErrorType.Failure)

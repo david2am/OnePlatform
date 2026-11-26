@@ -1,4 +1,4 @@
-namespace OnePlatform.Clearing.Domain.Shared;
+namespace OnePlatform.Clearing.Shared.Domain.Entities;
 
 public interface IGuidId<TSelf> where TSelf : IGuidId<TSelf>
 {
