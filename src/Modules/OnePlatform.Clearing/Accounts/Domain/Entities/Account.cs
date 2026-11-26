@@ -1,8 +1,11 @@
-using OnePlatform.Clearing.Domain.Enums;
-using OnePlatform.Clearing.Domain.Shared;
-using OnePlatform.Clearing.Domain.ValueObjects;
+using OnePlatform.Clearing.Accounts.Domain.Enums;
+using OnePlatform.Clearing.Accounts.Domain.ValueObjects;
+using OnePlatform.Clearing.Institutions.Domain.ValueObjects;
+using OnePlatform.Clearing.Shared.Domain.Entities;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
+using OnePlatform.Clearing.Shared.Domain.ValueObjects;
 
-namespace OnePlatform.Clearing.Domain.Entities;
+namespace OnePlatform.Clearing.Accounts.Domain.Entities;
 
 public sealed class Account : AggregateRoot<AccountId>
 {

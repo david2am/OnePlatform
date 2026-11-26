@@ -1,4 +1,4 @@
-namespace OnePlatform.Clearing.Domain.Enums;
+namespace OnePlatform.Clearing.Accounts.Domain.Enums;
 
 public enum AccountStatus
 {
