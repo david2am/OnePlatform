@@ -1,11 +1,9 @@
 using MediatR;
-using OnePlatform.Clearing.Domain.Shared;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
-namespace OnePlatform.Clearing.Application.Abstractions;
+namespace OnePlatform.Clearing.Shared.Application.Abstractions;
 
 public interface IQueryHandler<TQuery, TResponse>
   : IRequestHandler<TQuery, Result<TResponse>>
   where TQuery : IQuery<TResponse>
-{
-  
-}
+{}
