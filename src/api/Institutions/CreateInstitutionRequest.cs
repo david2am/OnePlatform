@@ -1,6 +1,7 @@
-using OnePlatform.Clearing.Application.Institutions.Commands;
-using OnePlatform.Clearing.Domain.Shared;
-using RoutingNumberVo = OnePlatform.Clearing.Domain.ValueObjects.RoutingNumber;
+
+using OnePlatform.Clearing.Institutions.Application.Commands;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
+using RoutingNumberVo = OnePlatform.Clearing.Institutions.Domain.ValueObjects.RoutingNumber;
 
 namespace OnePlatform.Api.Institutions;
 

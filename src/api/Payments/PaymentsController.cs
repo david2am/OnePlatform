@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnePlatform.Clearing.Application.Payments.Queries;
-using OnePlatform.Clearing.Domain.Shared;
+using OnePlatform.Clearing.Payments.Application.Queries;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
 namespace OnePlatform.Api.Payments;
 

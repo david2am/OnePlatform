@@ -1,6 +1,5 @@
-using OnePlatform.Clearing.Application;
-using OnePlatform.Clearing.Infrastructure;
 using System.Text.Json.Serialization;
+using OnePlatform.Clearing;
 
 var builder = WebApplication.CreateBuilder(args);
 
