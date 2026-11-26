@@ -25,4 +25,10 @@
     <Compile Remove="src\Modules\Clearing\**\*.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="tests/**" />
+    <EmbeddedResource Remove="tests/**" />
+    <None Remove="tests/**" />
+  </ItemGroup>
+
 </Project>

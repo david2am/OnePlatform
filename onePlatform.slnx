@@ -5,5 +5,8 @@
     <Project Path="src/Modules/Clearing/Domain/OnePlatform.Clearing.Domain.csproj" />
     <Project Path="src/Modules/Clearing/Infrastructure/OnePlatform.Clearing.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Clearing/OnePlatform.Clearing.Tests.csproj" />
+  </Folder>
   <Project Path="onePlatform.csproj" />
 </Solution>
