@@ -1,0 +1,50 @@
+
+using OnePlatform.Clearing.Payments.Domain.Entities;
+using OnePlatform.Clearing.Shared.Application.Abstractions;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
+
+namespace OnePlatform.Clearing.Payments.Application.Commands;
+
+public sealed class ReceivePaymentHandler : ICommandHandler<ReceivePaymentCommand, Payment>
+{
+  private readonly IPaymentRepository _payments;
+  private readonly TimeProvider _timeProvider;
+
+  public ReceivePaymentHandler(
+    IPaymentRepository payments,
+    TimeProvider timeProvider
+  )
+  {
+    _payments = payments;
+    _timeProvider = timeProvider;
+  }
+
+  public async Task<Result<Payment>> Handle(
+    ReceivePaymentCommand command,
+    CancellationToken ct = default
+  )
+  {
+    var receivedAt = _timeProvider.GetUtcNow();
+
+    var result = Payment.Receive(
+      command.MessageId,
+      command.EndToEndId,
+      command.Amount,
+      command.SenderInstitutionId,
+      command.Debtor,
+      command.Creditor,
+      command.Participants,
+      command.InitiatedAt,
+      receivedAt
+    );
+
+    if (result.IsFailure)
+      return Result.Failure<Payment>(result.Error);
+
+    var payment = result.Value;
+
+    await _payments.AddAsync(payment, ct);
+
+    return Result.Success(payment);
+  }
+}

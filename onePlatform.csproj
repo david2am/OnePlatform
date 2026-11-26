@@ -17,8 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="src\Modules\Clearing\Application\OnePlatform.Clearing.Application.csproj" />
-    <ProjectReference Include="src\Modules\Clearing\Infrastructure\OnePlatform.Clearing.Infrastructure.csproj" />
+<ProjectReference Include="src\Modules\Clearing\Infrastructure\OnePlatform.Clearing.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

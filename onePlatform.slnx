@@ -1,7 +1,6 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/Clearing/">
-    <Project Path="src/Modules/Clearing/Application/OnePlatform.Clearing.Application.csproj" />
     <Project Path="src/Modules/Clearing/Infrastructure/OnePlatform.Clearing.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">

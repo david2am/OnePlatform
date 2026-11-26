@@ -11,13 +11,13 @@ public sealed record CreateInstitutionRequest(
   DateTimeOffset MembershipSince
 )
 {
-  public Result<CreateInstitutionCommand> ToCommand()
+  public Result<RegisterInstitutionCommand> ToCommand()
   {
     var RoutingNumberResult = RoutingNumberVo.Create(RoutingNumber);
     if (RoutingNumberResult.IsFailure)
-      return Result.Failure<CreateInstitutionCommand>(RoutingNumberResult.Error);
+      return Result.Failure<RegisterInstitutionCommand>(RoutingNumberResult.Error);
     
-    var command = new CreateInstitutionCommand(
+    var command = new RegisterInstitutionCommand(
       Name,
       RoutingNumberResult.Value,
       IsMember,
