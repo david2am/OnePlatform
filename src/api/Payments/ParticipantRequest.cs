@@ -1,4 +1,4 @@
-using OnePlatform.Clearing.Domain.Enums;
+using OnePlatform.Clearing.Payments.Domain.Enums;
 
 namespace OnePlatform.Api.Payments;
 

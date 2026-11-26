@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnePlatform.Clearing.Application.Institutions.Queries;
-using OnePlatform.Clearing.Domain.Shared;
+using OnePlatform.Clearing.Institutions.Application.Queries;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
 namespace OnePlatform.Api.Institutions;
 

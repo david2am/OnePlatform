@@ -1,7 +1,8 @@
-using OnePlatform.Clearing.Application.Accounts.Commands;
-using OnePlatform.Clearing.Domain.Shared;
-using InstitutionIdVo = OnePlatform.Clearing.Domain.ValueObjects.InstitutionId;
-using CurrencyVo = OnePlatform.Clearing.Domain.ValueObjects.Currency;
+
+using InstitutionIdVo = OnePlatform.Clearing.Institutions.Domain.ValueObjects.InstitutionId;
+using CurrencyVo = OnePlatform.Clearing.Shared.Domain.ValueObjects.Currency;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
+using OnePlatform.Clearing.Accounts.Application.Commands;
 
 namespace OnePlatform.Api.Accounts;
 

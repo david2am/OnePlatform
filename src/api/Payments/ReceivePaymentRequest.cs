@@ -1,11 +1,12 @@
-
-using OnePlatform.Clearing.Application.Payments.Commands;
-using OnePlatform.Clearing.Domain.Shared;
-using OnePlatform.Clearing.Domain.ValueObjects;
-
-using MessageIdVo = OnePlatform.Clearing.Domain.ValueObjects.MessageId;
-using EndToEndIdVo = OnePlatform.Clearing.Domain.ValueObjects.EndToEndId;
-using CurrencyVo = OnePlatform.Clearing.Domain.ValueObjects.Currency;
+using MessageIdVo = OnePlatform.Clearing.Payments.Domain.ValueObjects.MessageId;
+using EndToEndIdVo = OnePlatform.Clearing.Payments.Domain.ValueObjects.EndToEndId;
+using CurrencyVo = OnePlatform.Clearing.Shared.Domain.ValueObjects.Currency;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
+using OnePlatform.Clearing.Payments.Application.Commands;
+using OnePlatform.Clearing.Payments.Domain.ValueObjects;
+using OnePlatform.Clearing.Institutions.Domain.ValueObjects;
+using OnePlatform.Clearing.Accounts.Domain.ValueObjects;
+using OnePlatform.Clearing.Shared.Domain.ValueObjects;
 
 namespace OnePlatform.Api.Payments;
 

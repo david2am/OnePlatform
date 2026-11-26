@@ -18,9 +18,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Modules\Clearing\Domain\OnePlatform.Clearing.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Modules\Clearing\Application\OnePlatform.Clearing.Application.csproj" />
-  </ItemGroup>
-
 </Project>
