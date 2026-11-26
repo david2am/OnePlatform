@@ -1,53 +1,121 @@
-# Variables (like constants you reuse)
-api   := "onePlatform.csproj"
-infra := "src/Modules/Clearing/Infrastructure"
 
-# Show all available commands when you just type `just`
+# ============================================================
+# Configuration
+# ============================================================
+
+api      := "onePlatform.csproj"
+clearing := "src/Modules/Clearing/OnePlatform.Clearing.csproj"
+
+db_container := "oneplatform-sql"
+db_name      := "OnePlatformDb"
+db_password  := "MyStrongPassword123!"
+
+connection_string := "Server=localhost,1433;Database=OnePlatformDb;User Id=sa;Password=MyStrongPassword123!;TrustServerCertificate=True;"
+
+migration_dir := "Shared/Infrastructure/Persistence/SqlServer/Migrations"
+db_context    := "ClearingDbContext"
+
+# ============================================================
+# General
+# ============================================================
+
 default:
     @just --list
 
-# Run the API locally
+build:
+    dotnet build
+
+test:
+    dotnet test
+
+clean:
+    dotnet clean
+
+# ============================================================
+# API
+# ============================================================
+
 run:
     dotnet run --project {{api}}
 
-# Try the placeholder endpoint
+watch:
+    dotnet watch --project {{api}}
+
 try-api:
     curl -X POST http://localhost:5221/api/payments \
       -H "Content-Type: application/json" \
       -d '{"message":"Hello, OnePlatform"}'
 
-# Set the connection string in user secrets
-secrets-init:
-    dotnet user-secrets init
-    dotnet user-secrets set "ConnectionStrings:Clearing" "Server=localhost,1433;Database=OnePlatformDb;User Id=sa;Password=MyStrongPassword123!;TrustServerCertificate=True;"
+# ============================================================
+# Configuration / Secrets
+# ============================================================
 
-# Create the SQL Server container (first time only)
+secrets-init:
+    dotnet user-secrets init --project {{api}}
+
+secrets-set:
+    dotnet user-secrets set "ConnectionStrings:Clearing" "{{connection_string}}" --project {{api}}
+
+secrets-list:
+    dotnet user-secrets list --project {{api}}
+
+# ============================================================
+# SQL Server
+# ============================================================
+
 db-create:
     docker run \
-      --name oneplatform-sql \
+      --name {{db_container}} \
       -e "ACCEPT_EULA=Y" \
-      -e "MSSQL_SA_PASSWORD=MyStrongPassword123!" \
+      -e "MSSQL_SA_PASSWORD={{db_password}}" \
       -p 1433:1433 \
       -d mcr.microsoft.com/mssql/server:2022-latest
 
-# Start / stop the existing container
 db-start:
-    docker start oneplatform-sql
+    docker start {{db_container}}
 
 db-stop:
-    docker stop oneplatform-sql
+    docker stop {{db_container}}
 
-# Apply migrations
+db-logs:
+    docker logs -f {{db_container}}
+
+db-status:
+    docker ps -a --filter "name={{db_container}}"
+
+# ============================================================
+# Entity Framework Core
+# ============================================================
+
+# Apply existing migrations
 db-update:
-    dotnet ef database update --project {{infra}} --startup-project .
+    dotnet ef database update \
+      --context {{db_context}} \
+      --project {{clearing}} \
+      --startup-project {{api}}
 
-# Create a new migration: just migration AddPayments
+# Create a migration
 migration name:
-    dotnet ef migrations add {{name}} --project {{infra}} --startup-project .
+    dotnet ef migrations add {{name}} \
+      --context {{db_context}} \
+      --project {{clearing}} \
+      --startup-project {{api}} \
+      --output-dir {{migration_dir}}
 
-# Full reset: drop DB, delete migrations, recreate, apply
-db-reset:
-    dotnet ef database drop --project {{infra}} --startup-project . --force
-    rm -rf {{infra}}/Migrations
-    dotnet ef migrations add Initial --project {{infra}} --startup-project .
-    dotnet ef database update --project {{infra}} --startup-project .
+# Remove the last unapplied migration
+migration-remove:
+    dotnet ef migrations remove \
+      --context {{db_context}} \
+      --project {{clearing}} \
+      --startup-project {{api}}
+
+# Drop the database
+db-drop:
+    dotnet ef database drop \
+      --context {{db_context}} \
+      --project {{clearing}} \
+      --startup-project {{api}} \
+      --force
+
+# Drop and recreate the database using existing migrations
+db-reset: db-drop db-update
