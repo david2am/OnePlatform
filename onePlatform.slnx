@@ -1,10 +1,8 @@
 <Solution>
   <Folder Name="/src/" />
-  <Folder Name="/src/Clearing/">
-    <Project Path="src/Modules/Clearing/Infrastructure/OnePlatform.Clearing.Infrastructure.csproj" />
-  </Folder>
+  <Folder Name="/src/Clearing/" />
   <Folder Name="/src/Modules/">
-    <Project Path="src/Modules/OnePlatform.Clearing/OnePlatform.Clearing.csproj" />
+    <Project Path="src/Modules/Clearing/OnePlatform.Clearing.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Clearing/OnePlatform.Clearing.Tests.csproj" />

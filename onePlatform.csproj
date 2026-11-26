@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="15.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-<ProjectReference Include="src\Modules\Clearing\Infrastructure\OnePlatform.Clearing.Infrastructure.csproj" />
+    <ProjectReference Include="src\Modules\Clearing\OnePlatform.Clearing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
