@@ -1,7 +1,8 @@
-using OnePlatform.Clearing.Domain.Shared;
-using OnePlatform.Clearing.Domain.ValueObjects;
+using OnePlatform.Clearing.Institutions.Domain.ValueObjects;
+using OnePlatform.Clearing.Shared.Domain.Entities;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
-namespace OnePlatform.Clearing.Domain.Entities;
+namespace OnePlatform.Clearing.Institutions.Domain.Entities;
 
 public sealed class Institution : AggregateRoot<InstitutionId>
 {

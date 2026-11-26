@@ -1,6 +1,7 @@
-using OnePlatform.Clearing.Domain.Shared;
+using OnePlatform.Clearing.Shared.Domain.Entities;
+using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
-namespace OnePlatform.Clearing.Domain.ValueObjects;
+namespace OnePlatform.Clearing.Institutions.Domain.ValueObjects;
 
 public sealed record InstitutionId : IGuidId<InstitutionId>
 {
