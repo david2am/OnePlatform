@@ -12,7 +12,7 @@ using OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
 namespace OnePlatform.Clearing.Infrastructure.Migrations
 {
     [DbContext(typeof(ClearingDbContext))]
-    [Migration("20261125182258_Initial")]
+    [Migration("20261126132414_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

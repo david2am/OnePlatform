@@ -121,6 +121,16 @@ public sealed class Payment : AggregateRoot<PaymentId>
 
     if (participantsValidation.IsFailure)
         return Result.Failure<Payment>(participantsValidation.Error);
+
+    var dateValidation = ValidateInitiatedAt(
+      initiatedAt,
+      receivedAt,
+      TimeSpan.FromHours(24),
+      TimeSpan.FromSeconds(60)
+    );
+
+    if (dateValidation.IsFailure)
+        return Result.Failure<Payment>(dateValidation.Error);
     
     var paymentId = PaymentId.New();
 
@@ -214,6 +224,22 @@ public sealed class Payment : AggregateRoot<PaymentId>
             PaymentErrors.DuplicateParticipantAccounts);
 
     return Result.Success(participants);
+  }
+
+  private static Result ValidateInitiatedAt(
+      DateTimeOffset initiatedAt,
+      DateTimeOffset now,
+      TimeSpan maximumAge,
+      TimeSpan futureTolerance
+  )
+  {
+      if (initiatedAt > now.Add(futureTolerance))
+          return Result.Failure(PaymentErrors.FutureInitiationDate);
+
+      if (initiatedAt < now.Subtract(maximumAge))
+          return Result.Failure(PaymentErrors.ExpiredInitiationDate);
+
+      return Result.Success();
   }
 
   public Result RecordValidationResult(
@@ -425,6 +451,16 @@ public static class PaymentErrors
   public static readonly Error DuplicateParticipantAccounts = new(
       "Payment.DuplicateParticipantAccounts",
       "Participants cannot have the same account."
+  );
+  
+  public static readonly Error FutureInitiationDate = new(
+      "Payment.FutureInitiationDate",
+      "The payment initiation date cannot be in the future."
+  );
+  
+  public static readonly Error ExpiredInitiationDate = new(
+      "Payment.ExpiredInitiationDate",
+      "The payment initiation date exceeds the maximum allowed age."
   );
 
   public static readonly Error ConcurrencyConflict = new(
