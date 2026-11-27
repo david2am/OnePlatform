@@ -186,49 +186,54 @@ public sealed class Payment : AggregateRoot<PaymentId>
   }
 
   private static Result<IReadOnlyCollection<ParticipantInput>>
-  ValidateParticipants(
-    IReadOnlyCollection<ParticipantInput> participants
-  )
+    ValidateParticipants(
+        IReadOnlyCollection<ParticipantInput> participants)
   {
     if (participants is null || participants.Count == 0)
+    {
         return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
-          PaymentErrors.ParticipantsRequired);
+            PaymentErrors.ParticipantsRequired);
+    }
 
-    var debtorAgents = participants
-        .Where(p => p.Role == ParticipantRole.DebtorAgent)
-        .ToList();
+    var items = participants.ToArray();
 
-    if (debtorAgents.Count != 1)
+    // Exactly one DebtorAgent is required.
+    var debtorAgentCount = items.Count(
+        p => p.Role == ParticipantRole.DebtorAgent);
+
+    if (debtorAgentCount != 1)
         return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
-          PaymentErrors.InvalidDebtorAgentCount);
+            PaymentErrors.InvalidDebtorAgentCount);
 
-    var creditorAgents = participants
-        .Where(p => p.Role == ParticipantRole.CreditorAgent)
-        .ToList();
+    // Exactly one CreditorAgent is required.
+    var creditorAgentCount = items.Count(
+        p => p.Role == ParticipantRole.CreditorAgent);
 
-    if (creditorAgents.Count != 1)
+    if (creditorAgentCount != 1)
         return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
-          PaymentErrors.InvalidCreditorAgentCount);
+            PaymentErrors.InvalidCreditorAgentCount);
 
-    var duplicates = participants
+    // An institution cannot participate more than once in the same role.
+    var hasDuplicateParticipants = items
         .GroupBy(p => new { p.InstitutionId, p.Role })
-        .Any(g => g.Count() > 1);
+        .Any(group => group.Count() > 1);
 
-    if (duplicates)
+    if (hasDuplicateParticipants)
         return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
-          PaymentErrors.DuplicateParticipants);
+            PaymentErrors.DuplicateParticipants);
 
-    var duplicateAccounts = participants
-        .GroupBy(p => new { p.AccountId })
-        .Any(g => g.Count() > 1);
+    // An account cannot participate more than once.
+    var hasDuplicateAccounts = items
+        .GroupBy(p => p.AccountId)
+        .Any(group => group.Count() > 1);
 
-    if (duplicateAccounts)
+    if (hasDuplicateAccounts)
         return Result.Failure<IReadOnlyCollection<ParticipantInput>>(
             PaymentErrors.DuplicateParticipantAccounts);
 
-    return Result.Success(participants);
+    return Result.Success<IReadOnlyCollection<ParticipantInput>>
+          (Array.AsReadOnly(items));
   }
-
   private static Result ValidateInitiatedAt(
       DateTimeOffset initiatedAt,
       DateTimeOffset now,
