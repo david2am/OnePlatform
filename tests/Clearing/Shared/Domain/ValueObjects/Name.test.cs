@@ -2,7 +2,7 @@ using OnePlatform.Clearing.Shared.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Tests.Shared.Domain.ValueObjects;
 
-public class NameTest
+public class NameTests
 {
   // ---------- Required rule ----------
 
