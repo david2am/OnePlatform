@@ -6,7 +6,7 @@ using OnePlatform.Clearing.Accounts.Domain.ValueObjects;
 using OnePlatform.Clearing.Institutions.Domain.ValueObjects;
 using OnePlatform.Clearing.Shared.Infrastructure.Persistence.SqlServer;
 
-namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer;
+namespace OnePlatform.Clearing.Accounts.Infrastructure.Persistence.SqlServer;
 
 internal class AccountRepository : IAccountRepository
 {

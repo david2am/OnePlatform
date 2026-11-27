@@ -12,8 +12,8 @@ using OnePlatform.Clearing.Shared.Infrastructure.Persistence.SqlServer;
 namespace OnePlatform.Clearing.Shared.Infrastructure.Persistence.SqlServer.Migrations
 {
     [DbContext(typeof(ClearingDbContext))]
-    [Migration("20261126202311_init")]
-    partial class init
+    [Migration("20261127140937_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
