@@ -1,5 +1,4 @@
 using OnePlatform.Clearing.Shared.Domain.ValueObjects;
-using Xunit;
 
 namespace OnePlatform.Clearing.Shared.Domain.Tests.ValueObjects;
 
