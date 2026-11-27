@@ -5,7 +5,7 @@ using OnePlatform.Clearing.Payments.Domain.ValueObjects;
 using OnePlatform.Clearing.Shared.Application.Abstractions;
 using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
-namespace OnePlatform.Clearing.Application.Payments.Queries;
+namespace OnePlatform.Clearing.Payments.Application.Queries;
 
 public sealed class GetPaymentByIdQueryHandler
   : IQueryHandler<GetPaymentByIdQuery, PaymentResponse>

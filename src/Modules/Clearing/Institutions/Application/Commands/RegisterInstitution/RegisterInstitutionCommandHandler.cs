@@ -4,7 +4,7 @@ using OnePlatform.Clearing.Institutions.Domain.Entities;
 using OnePlatform.Clearing.Shared.Application.Abstractions;
 using OnePlatform.Clearing.Shared.Domain.Exceptions;
 
-namespace OnePlatform.Clearing.Application.Institutions.Commands;
+namespace OnePlatform.Clearing.Institutions.Application.Commands;
 
 internal sealed class RegisterInstitutionCommandHandler : ICommandHandler<RegisterInstitutionCommand, Institution>
 {

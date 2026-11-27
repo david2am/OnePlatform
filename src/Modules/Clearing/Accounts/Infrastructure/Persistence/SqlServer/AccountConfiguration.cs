@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Accounts.Domain.Entities;
 using OnePlatform.Clearing.Institutions.Domain.Entities;
 
-namespace OnePlatform.Clearing.Infrastructure.Persistence.SqlServer.Configurations;
+namespace OnePlatform.Clearing.Accounts.Infrastructure.Persistence.SqlServer.Configurations;
 
 public sealed class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
