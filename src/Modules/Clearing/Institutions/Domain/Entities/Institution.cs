@@ -1,12 +1,13 @@
 using OnePlatform.Clearing.Institutions.Domain.ValueObjects;
 using OnePlatform.Clearing.Shared.Domain.Entities;
 using OnePlatform.Clearing.Shared.Domain.Exceptions;
+using OnePlatform.Clearing.Shared.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Institutions.Domain.Entities;
 
 public sealed class Institution : AggregateRoot<InstitutionId>
 {
-  public string Name { get; private set; } = string.Empty;
+  public Name Name { get; private set; }
 
   public RoutingNumber RoutingNumber { get; private set; }
   public bool IsMember { get; private set; }
@@ -15,12 +16,13 @@ public sealed class Institution : AggregateRoot<InstitutionId>
 
   private Institution() : base(null!)
   {
+    Name = null!;
     RoutingNumber = null!;
   }
   
   private Institution(
     InstitutionId id,
-    string name,
+    Name name,
     RoutingNumber routingNumber,
     bool isMember,
     DateTimeOffset? membershipSince) : base(id)
@@ -32,13 +34,16 @@ public sealed class Institution : AggregateRoot<InstitutionId>
   }
 
   public static Result<Institution> Create(
-    string name,
+    Name name,
     RoutingNumber routingNumber,
     bool isMember,
     DateTimeOffset? membershipSince)
   {
-    if (string.IsNullOrWhiteSpace(name))
+    if (name is null)
       return Result.Failure<Institution>(InstitutionErrors.NameRequired);
+
+    if (routingNumber is null)
+      return Result.Failure<Institution>(InstitutionErrors.RoutingNumberRequired);
 
     if (isMember && membershipSince is null)
       return Result.Failure<Institution>(InstitutionErrors.MembershipDateRequired);
@@ -63,7 +68,7 @@ public sealed class Institution : AggregateRoot<InstitutionId>
       return Result.Failure(InstitutionErrors.AlreadyMember);
 
     IsMember = true;
-    MembershipSince = since;
+    MembershipSince = since; // TODO: validate date constraints
 
     return Result.Success();
   }
@@ -73,6 +78,9 @@ public static class InstitutionErrors
 {
   public static readonly Error NameRequired = new(
     "Institution.NameRequired", "Name is required.");
+  
+  public static readonly Error RoutingNumberRequired = new(
+    "Institution.RoutingNumberRequired", "Routing Number is required.");
 
   public static readonly Error MembershipDateRequired = new(
     "Institution.MembershipDateRequired",

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnePlatform.Clearing.Institutions.Domain.Entities;
 using OnePlatform.Clearing.Institutions.Domain.ValueObjects;
+using OnePlatform.Clearing.Shared.Domain.ValueObjects;
 
 namespace OnePlatform.Clearing.Institutions.Infrastructure.Persistence.SqlServer;
 
@@ -21,6 +22,13 @@ public sealed class InstitutionConfiguration
         builder.HasKey(i => i.Id);
 
         builder.Property(i => i.Name)
+               .HasMaxLength(200)
+               .IsRequired();
+
+        builder.Property(i => i.Name)
+               .HasConversion(
+                   name => name.Value,
+                   value => Name.Create(value).Value)
                .HasMaxLength(200)
                .IsRequired();
 
